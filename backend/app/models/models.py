@@ -1,5 +1,5 @@
 from app.db.database import Base
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -10,18 +10,49 @@ class Account(Base):
     username = Column(String(20), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
 
+    created_items = relationship("Item", back_populates="creator")
+    purchases = relationship("Purchase", back_populates="buyer")
+
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
 
 class Item(Base):
     __tablename__ = "items"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    price = Column(Integer, nullable=False)
-    account_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
+    description = Column(String(1000), nullable=True)
+    count = Column(Integer, default=0, nullable=False)
+    price = Column(Float, nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
 
-    account = relationship("Account", back_populates="items")
-    
+    category = relationship("Category", back_populates="items")
+    creator = relationship("Account", back_populates="created_items")
+    purchases = relationship("Purchase", back_populates="item")
+
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), nullable=False)
+
+    items = relationship("Item", back_populates="category")
+
+
+class Purchase(Base):
+    __tablename__ = "purchases"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    account_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
+    item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
+    price = Column(Float, nullable=False)
+    count = Column(Integer, nullable=False)
+
+    buyer = relationship("Account", back_populates="purchases")
+    item = relationship("Item", back_populates="purchases")
+
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
