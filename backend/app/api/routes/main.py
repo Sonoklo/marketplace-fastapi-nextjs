@@ -1,11 +1,32 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from backend.app.db.database import get_db
-import backend.app.crud.main as crud
-from backend.app.schemas.schemas import *
-from backend.app.models.models import Account
-from backend.app.core.dependencies import get_current_user
+from datetime import timedelta
+
+from app.db.database import get_db
+import app.crud.main as crud
+from app.schemas.schemas import *
+from app.models.models import Account
+from app.core import config
 
 router_register = APIRouter(prefix="/register",tags=["Account","Auth"])
 router_login = APIRouter(prefix="/login",tags=["Account","Auth"])
+router_profile = APIRouter(prefix="/profile",tags=["Account","Auth"])
+router_items = APIRouter(prefix="/items",tags=["Item"])
+
+@router_register.post("/", status_code=status.HTTP_201_CREATED)
+def register(account:AccountRegister, db:Session=Depends(get_db)) -> None:
+    if crud.get_account_by_username(account.username, db):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Аккаунт с данным юзернеймом уже существует")
+    crud.create_account(account, db)
+    return None
+
+@router_login.post("/", response_model=Token, status_code=status.HTTP_200_OK)
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session=Depends(get_db)) -> Token:
+    db_account: Account = crud.get_account(username=form_data.username, password=form_data.password, db=db)
+    if db_account:
+        access_token_expires = timedelta(minutes=config.settings.TOKEN_EXPIRES_TIME)
+        token = crud.create_access_token(data={"sub": db_account.username, "user_id": db_account.id, "exp":access_token_expires},)
+        return Token(access_token=token, token_type="bearer")
+
+
