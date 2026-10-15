@@ -1,12 +1,13 @@
 
 from fastapi.security import OAuth2PasswordBearer
-from backend.app.models.models import Account
 from fastapi import Depends, HTTPException, status
 from typing import Optional
-from backend.app.db.database import Session, get_db
-from backend.app.crud.main import verify_access_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/author/login")
+from app.models.models import Account
+from app.db.database import Session, get_db
+from app.crud.main import verify_access_token
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
