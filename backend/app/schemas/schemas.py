@@ -24,4 +24,20 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class ItemBase(BaseModel):
+    name: str
+    description: str
+    count: int
+    price: float
+    category: str 
 
+class ItemCreate(ItemBase):
+    pass
+
+class ItemResponse(ItemBase):
+    id: int
+    user_id: int
+
+class ItemUpdate(BaseModel):
+    name: str
+    price: float
