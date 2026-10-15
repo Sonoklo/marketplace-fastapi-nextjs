@@ -6,8 +6,10 @@ from datetime import timedelta
 from app.db.database import get_db
 import app.crud.main as crud
 from app.schemas.schemas import *
-from app.models.models import Account
+from app.models.models import Account, Item
+
 from app.core import config
+from app.core.dependencies import get_current_user
 
 router_register = APIRouter(prefix="/register",tags=["Account","Auth"])
 router_login = APIRouter(prefix="/login",tags=["Account","Auth"])
@@ -29,4 +31,11 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session=Depends(g
         token = crud.create_access_token(data={"sub": db_account.username, "user_id": db_account.id, "exp":access_token_expires},)
         return Token(access_token=token, token_type="bearer")
 
+@router_profile.get("/", response_model=AccountResponse, status_code=status.HTTP_200_OK)
+def get_profile(current_user: Account = Depends(get_current_user)) -> Account:
+    return current_user
+
+@router_profile.post("/items", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
+def add_item(item: ItemCreate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Item:
+    return crud.create_item(item=item, db=db, user_id=current_user.id)
 
