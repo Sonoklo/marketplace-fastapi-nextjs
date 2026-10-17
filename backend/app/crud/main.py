@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from jose import jwt
 from fastapi import HTTPException, status
 
-from app.models.models import Account, Item
+from app.models.models import Account, Item, Purchase
 from app.core.security import get_password_hash, verify_password
 from app.core.config import settings
 from app.schemas.schemas import *
@@ -33,7 +33,10 @@ def get_account(username:str, password:str, db:Session) -> Account:
     if not verify_password(password, account.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Пароль не верный")
     return account
-    
+
+def get_account_items(user_id:int, db:Session) -> list[Item]:
+    return db.query(Item).filter_by(owner_id=user_id).all()
+
 def create_access_token(data:dict)->str:
     to_encode=data.copy()
     expire=datetime.now(timezone.utc)+to_encode["exp"]
