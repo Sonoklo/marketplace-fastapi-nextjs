@@ -8,7 +8,7 @@ class AccountBase(BaseModel):
         pattern=r"^[a-zA-Z0-9_]+$",
         description="Username of the user",
     )
-    
+
 class AccountRegister(AccountBase):
     email: EmailStr = Field(min_length=1, max_length=255, description="Email address of the user")
     password: str = Field(
@@ -19,8 +19,14 @@ class AccountRegister(AccountBase):
     )
 
 class AccountLogin(BaseModel):
-    access_token: str
-    token_type: str
+    access_token: str = Field(
+        description="JWT токен доступа",
+        examples=["vcnbxcvbxcvbx..."]
+    )
+    token_type: str = Field(
+        default="bearer",
+        description="Тип токена"
+    )
 
 class AccountResponse(AccountBase):
     id: int
