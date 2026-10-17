@@ -38,11 +38,11 @@ class Token(BaseModel):
     )
 
 class ItemBase(BaseModel):
-    name: str
-    description: str
-    count: int
-    price: float
-    category: str 
+    name: str = Field(min_length=1, max_length=255, description="Name of the item")
+    description: str | None = Field(default=None, min_length=1, max_length=255, description="Description of the item")
+    count: int = Field(gt=1, description="Count of the item")
+    price: float = Field(gt=0, description="Price of the item")
+    category: list[str] = Field(description="List of categories for the item")
 
 class ItemCreate(ItemBase):
     pass
