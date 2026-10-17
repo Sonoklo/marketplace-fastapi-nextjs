@@ -18,16 +18,6 @@ class AccountRegister(AccountBase):
         description="Password of the user"
     )
 
-class AccountLogin(BaseModel):
-    access_token: str = Field(
-        description="JWT токен доступа",
-        examples=["vcnbxcvbxcvbx..."]
-    )
-    token_type: str = Field(
-        default="bearer",
-        description="Тип токена"
-    )
-
 class AccountResponse(AccountBase):
     id: int
     created_at: datetime
@@ -38,8 +28,14 @@ class TokenData(BaseModel):
     user_id: int
 
 class Token(BaseModel):
-    access_token: str
-    token_type: str
+    access_token: str = Field(
+        description="JWT токен доступа",
+        examples=["vcnbxcvbxcvbx..."]
+    )
+    token_type: str = Field(
+        default="bearer",
+        description="Тип токена"
+    )
 
 class ItemBase(BaseModel):
     name: str
