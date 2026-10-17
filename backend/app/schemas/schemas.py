@@ -17,6 +17,11 @@ class AccountRegister(AccountBase):
         max_length=128,
         description="Password of the user"
     )
+    repeat_password: str = Field(
+        min_length=8,
+        max_length=128,
+        description="Repeat password of the user"
+    )
 
     @field_validator("password")
     @classmethod
