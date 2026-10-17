@@ -89,3 +89,9 @@ class PurchaseBase(BaseModel):
 class PurchaseResponse(PurchaseBase):
     id: int
     created_at: datetime
+
+class ProfileResponse(BaseModel):
+    username: str
+    email: str
+    items: list[ItemResponse]
+    purchases: list[PurchaseResponse]
