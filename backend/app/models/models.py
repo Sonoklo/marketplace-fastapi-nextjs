@@ -55,7 +55,7 @@ class Purchase(Base):
     account_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
     price = Column(Float, nullable=False)
-    count = Column(Integer, nullable=False)
+    count = Column(Integer, nullable=False, default=1)
 
     buyer = relationship("Account", back_populates="purchases")
     item = relationship("Item", back_populates="purchases")
