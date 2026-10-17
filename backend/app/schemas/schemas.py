@@ -52,5 +52,9 @@ class ItemResponse(ItemBase):
     user_id: int
 
 class ItemUpdate(BaseModel):
-    name: str
-    price: float
+    name: str | None = Field(default=None, min_length=1, max_length=255, description="Name of the item")
+    description: str | None = Field(default=None, min_length=1, max_length=255, description="Description of the item")
+    count: int | None = Field(default=None, gt=1, description="Count of the item")
+    price: float | None = Field(default=None, gt=0, description="Price of the item")
+    category: list[str] | None = Field(default=None, description="List of categories for the item")
+
