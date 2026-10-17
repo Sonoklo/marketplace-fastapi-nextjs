@@ -37,6 +37,9 @@ def get_account(username:str, password:str, db:Session) -> Account:
 def get_account_items(user_id:int, db:Session) -> list[Item]:
     return db.query(Item).filter_by(owner_id=user_id).all()
 
+def get_account_purchases(user_id:int, db:Session) -> list[Purchase]:
+    return db.query(Purchase).filter_by(purchaser_id=user_id).all()
+
 def create_access_token(data:dict)->str:
     to_encode=data.copy()
     expire=datetime.now(timezone.utc)+to_encode["exp"]
