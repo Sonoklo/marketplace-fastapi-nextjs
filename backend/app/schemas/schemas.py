@@ -2,8 +2,13 @@ from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 
 class AccountBase(BaseModel):
-    username: str
-
+    username: str = Field(
+        min_length=1,
+        max_length=20,
+        pattern=r"^[a-zA-Z0-9_]+$",
+        description="Username of the user",
+    )
+    
 class AccountRegister(AccountBase):
     email: EmailStr = Field(min_length=1, max_length=255, description="Email address of the user")
     password: str = Field(
