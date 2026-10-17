@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, EmailStr
+import re
+from pydantic import BaseModel, Field, field_validator, EmailStr
 from datetime import datetime
 
 class AccountBase(BaseModel):
@@ -14,9 +15,25 @@ class AccountRegister(AccountBase):
     password: str = Field(
         min_length=8,
         max_length=128,
-        pattern=r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>/?]).+$",
         description="Password of the user"
     )
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not re.search(r"[a-z]", value):
+            raise ValueError("Password must contain a lowercase letter")
+
+        if not re.search(r"[A-Z]", value):
+            raise ValueError("Password must contain an uppercase letter")
+
+        if not re.search(r"\d", value):
+            raise ValueError("Password must contain a digit")
+
+        if not re.search(r"""[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]""", value):
+            raise ValueError("Password must contain a special character")
+
+        return value
 
 class AccountResponse(AccountBase):
     id: int
