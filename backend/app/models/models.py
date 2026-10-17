@@ -30,7 +30,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     description = Column(String(1000), default=None, nullable=True)
-    count = Column(Integer, default=0, nullable=False)
+    count = Column(Integer, default=1, nullable=False)
     price = Column(Float, nullable=False)
     user_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
 
