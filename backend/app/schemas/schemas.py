@@ -85,3 +85,7 @@ class PurchaseBase(BaseModel):
     item_id: int
     price: int
     count: int
+
+class PurchaseResponse(PurchaseBase):
+    id: int
+    created_at: datetime
