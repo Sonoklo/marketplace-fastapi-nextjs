@@ -15,6 +15,9 @@ def get_account_by_username(username:str, db:Session) -> Account:
 def get_account_by_email(email:str, db:Session) -> Account:
     return db.query(Account).filter_by(email=email).first()
 
+def get_account_by_id(user_id:int, db:Session) -> Account:
+    return db.query(Account).filter_by(id=user_id).first()
+
 def create_account(account:AccountRegister, db:Session) -> AccountResponse:
     hash_password = get_password_hash(account.password)
     db_account = Account(username = account.username, password=hash_password, email=account.email)
