@@ -35,9 +35,9 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session=Depends(g
         token = crud.create_access_token(data={"sub": db_account.username, "user_id": db_account.id, "exp":access_token_expires},)
         return Token(access_token=token, token_type="bearer")
 
-@router_profile.get("/", response_model=AccountResponse, status_code=status.HTTP_200_OK)
-def get_profile(current_user: Account = Depends(get_current_user)) -> Account:
-    return current_user
+@router_profile.get("/", response_model=ProfileResponse, status_code=status.HTTP_200_OK)
+def get_profile(current_user: Account = Depends(get_current_user), db:Session=Depends(get_db)) -> ProfileResponse:
+    return crud.get_profile(user_id=current_user.id, db=db)
 
 @router_profile.post("/items", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
 def add_item(item: ItemCreate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Item:
