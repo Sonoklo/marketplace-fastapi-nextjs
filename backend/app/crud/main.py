@@ -40,6 +40,12 @@ def get_account_items(user_id:int, db:Session) -> list[Item]:
 def get_account_purchases(user_id:int, db:Session) -> list[Purchase]:
     return db.query(Purchase).filter_by(purchaser_id=user_id).all()
 
+def get_profile(user_id:int, db:Session) -> ProfileResponse:
+    account: Account = get_account_by_id(user_id, db)
+    items: list[Item] = get_account_items(user_id, db)
+    purchases: list[Purchase] = get_account_purchases(user_id, db)
+    return ProfileResponse(username=account.username, email=account.email, items=items, purchases=purchases)
+
 def create_access_token(data:dict)->str:
     to_encode=data.copy()
     expire=datetime.now(timezone.utc)+to_encode["exp"]
