@@ -5,6 +5,7 @@ class AccountBase(BaseModel):
     username: str
 
 class AccountRegister(AccountBase):
+    email: str
     password:str
 
 class AccountLogin(BaseModel):
