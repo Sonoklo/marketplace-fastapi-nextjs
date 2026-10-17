@@ -12,6 +12,9 @@ from app.schemas.schemas import *
 def get_account_by_username(username:str, db:Session) -> Account:
     return db.query(Account).filter_by(username=username).first()
 
+def get_account_by_email(email:str, db:Session) -> Account:
+    return db.query(Account).filter_by(email=email).first()
+
 def create_account(account:AccountRegister, db:Session) -> AccountResponse:
     hash_password = get_password_hash(account.password)
     db_account = Account(username = account.username, password=hash_password)
