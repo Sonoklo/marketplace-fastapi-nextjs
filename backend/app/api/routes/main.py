@@ -18,8 +18,12 @@ router_items = APIRouter(prefix="/items",tags=["Item"])
 
 @router_register.post("/", status_code=status.HTTP_201_CREATED)
 def register(account:AccountRegister, db:Session=Depends(get_db)) -> None:
+    if account.password != account.repeat_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Пароли не совпадают")
     if crud.get_account_by_username(account.username, db):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Аккаунт с данным юзернеймом уже существует")
+    if crud.get_account_by_email(account.email, db):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Аккаунт с данным email уже существует")
     crud.create_account(account, db)
     return None
 
