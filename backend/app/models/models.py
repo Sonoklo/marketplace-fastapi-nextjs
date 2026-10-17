@@ -1,5 +1,5 @@
 from app.db.database import Base
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Table
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -17,6 +17,12 @@ class Account(Base):
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
+item_categories = Table(
+    "item_categories",
+    Base.metadata,
+    Column("item_id", Integer, ForeignKey("items.id"), primary_key=True),
+    Column("category_id", Integer, ForeignKey("categories.id"), primary_key=True),
+)
 
 class Item(Base):
     __tablename__ = "items"
@@ -26,10 +32,9 @@ class Item(Base):
     description = Column(String(1000), nullable=True)
     count = Column(Integer, default=0, nullable=False)
     price = Column(Float, nullable=False)
-    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     user_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
 
-    category = relationship("Category", back_populates="items")
+    categories = relationship("Category", secondary=item_categories, back_populates="items")
     creator = relationship("Account", back_populates="created_items")
     purchases = relationship("Purchase", back_populates="item")
 
@@ -37,10 +42,10 @@ class Item(Base):
 class Category(Base):
     __tablename__ = "categories"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(100), nullable=False)
 
-    items = relationship("Item", back_populates="category")
+    items = relationship("Item", secondary=item_categories, back_populates="categories")
 
 
 class Purchase(Base):
