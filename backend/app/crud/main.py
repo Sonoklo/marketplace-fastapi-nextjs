@@ -17,7 +17,7 @@ def get_account_by_email(email:str, db:Session) -> Account:
 
 def create_account(account:AccountRegister, db:Session) -> AccountResponse:
     hash_password = get_password_hash(account.password)
-    db_account = Account(username = account.username, password=hash_password)
+    db_account = Account(username = account.username, password=hash_password, email=account.email)
     db.add(db_account)
     db.commit()
     db.refresh(db_account)
