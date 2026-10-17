@@ -80,3 +80,8 @@ class ItemUpdate(BaseModel):
     price: float | None = Field(default=None, gt=0, description="Price of the item")
     category: list[str] | None = Field(default=None, description="List of categories for the item")
 
+class PurchaseBase(BaseModel):
+    account_id: int
+    item_id: int
+    price: int
+    count: int
