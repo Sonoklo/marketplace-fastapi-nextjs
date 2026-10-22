@@ -59,3 +59,7 @@ def buy_item(item: PurchaseRequest, db: Session = Depends(get_db), current_user:
 def add_item(item: ItemCreate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Item:
     return crud.create_item(item=item, db=db, user_id=current_user.id)
 
+@router_profile.patch("/items/{item_id}", response_model=ItemResponse, status_code=status.HTTP_200_OK)
+def update_item(item_id: int, item: ItemUpdate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Item:
+    return crud.update_item(item_id=item_id, item=item, db=db, user_id=current_user.id)
+
