@@ -42,6 +42,10 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session=Depends(g
 def get_profile(current_user: Account = Depends(get_current_user), db:Session=Depends(get_db)) -> ProfileResponse:
     return crud.get_profile(user_id=current_user.id, db=db)
 
+@router_profile.patch("/", response_model=AccountResponse, status_code=status.HTTP_200_OK)
+def update_profile(account:AccountUpdate, db:Session=Depends(get_db), current_user:Account=Depends(get_current_user)) -> Account:
+    return crud.update_account(account=account, db=db, user_id=current_user.id)
+
 # Items
 @router_main.get("/", response_model=list[ItemResponse], status_code=status.HTTP_200_OK)
 def main(db:Session=Depends(get_db)) -> list[ItemResponse]:
