@@ -22,3 +22,6 @@ app.add_middleware(
 
 app.include_router(main.router_register)
 app.include_router(main.router_login)
+app.include_router(main.router_profile)
+app.include_router(main.router_main)
+app.include_router(main.router_items)
