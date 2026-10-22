@@ -63,3 +63,7 @@ def add_item(item: ItemCreate, db: Session = Depends(get_db), current_user: Acco
 def update_item(item_id: int, item: ItemUpdate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Item:
     return crud.update_item(item_id=item_id, item=item, db=db, user_id=current_user.id)
 
+@router_profile.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_item(item_id: int, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> None:
+    crud.delete_item(item_id=item_id, db=db, user_id=current_user.id)
+    return None
