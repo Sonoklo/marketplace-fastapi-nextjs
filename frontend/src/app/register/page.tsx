@@ -126,7 +126,7 @@ export default function RegisterPage() {
       >
         <h2
           className="text-2xl font-semibold mb-8"
-          style={{ color: 'var(--ink)' }}
+          style={{ color: 'var(--text-primary)' }}
         >
           Регистрация
         </h2>
@@ -146,7 +146,7 @@ export default function RegisterPage() {
           />
           <p
             className="text-xs mt-1 mb-4"
-            style={{ color: 'var(--muted)' }}
+            style={{ color: 'var(--text-secondary)' }}
           >
             Требования: 1-20 символов, только буквы, цифры и символ подчеркивания
           </p>
@@ -174,7 +174,7 @@ export default function RegisterPage() {
           />
           <p
             className="text-xs mt-1 mb-4"
-            style={{ color: 'var(--muted)' }}
+            style={{ color: 'var(--text-secondary)' }}
           >
             Требования: 8-128 символов, минимум одна заглавная буква, одна строчная, одна цифра и один специальный символ
           </p>
@@ -196,7 +196,7 @@ export default function RegisterPage() {
             <Link
               href="/login"
               className="text-sm font-medium hover:opacity-80"
-              style={{ color: 'var(--primary)' }}
+              style={{ color: 'var(--accent)' }}
             >
               Войти
             </Link>

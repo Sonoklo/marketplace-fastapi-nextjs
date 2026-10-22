@@ -88,7 +88,7 @@ export default function MainPage() {
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: 'var(--canvas)' }}
       >
-        <p style={{ color: 'var(--ink)' }}>Загрузка...</p>
+        <p style={{ color: 'var(--text-primary)' }}>Загрузка...</p>
       </div>
     );
   }
@@ -105,7 +105,7 @@ export default function MainPage() {
       >
         <h1
           className="text-xl font-semibold"
-          style={{ color: 'var(--ink)' }}
+          style={{ color: 'var(--text-primary)' }}
         >
           Маркетплейс
         </h1>
@@ -128,7 +128,7 @@ export default function MainPage() {
       <div className="max-w-7xl mx-auto p-8">
         <h2
           className="text-2xl font-semibold mb-6"
-          style={{ color: 'var(--ink)' }}
+          style={{ color: 'var(--text-primary)' }}
         >
           Доступные товары
         </h2>
@@ -158,24 +158,24 @@ export default function MainPage() {
               >
                 <h3
                   className="text-lg font-semibold mb-2"
-                  style={{ color: 'var(--ink)' }}
+                  style={{ color: 'var(--text-primary)' }}
                 >
                   {item.name}
                 </h3>
                 <p
                   className="text-sm mb-4"
-                  style={{ color: 'var(--ink)' }}
+                  style={{ color: 'var(--text-primary)' }}
                 >
                   {item.description || 'Нет описания'}
                 </p>
-                <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--ink)' }}>
+                <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--text-primary)' }}>
                   <span>Цена: {item.price}</span>
                   <span>Доступно: {item.count}</span>
                 </div>
                 <div className="mb-4">
                   <p
                     className="text-sm mb-2"
-                    style={{ color: 'var(--ink)' }}
+                    style={{ color: 'var(--text-primary)' }}
                   >
                     Категории: {item.categories.map(c => c.name).join(', ')}
                   </p>
@@ -184,7 +184,7 @@ export default function MainPage() {
                   <button
                     onClick={() => handleDecrement(item.id)}
                     className="w-8 h-8 rounded flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--border)', color: 'var(--ink)' }}
+                    style={{ backgroundColor: 'var(--border)', color: 'var(--text-primary)' }}
                   >
                     -
                   </button>
@@ -195,12 +195,12 @@ export default function MainPage() {
                     value={itemQuantities[item.id] || 1}
                     onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                     className="w-16 text-center border rounded py-1"
-                    style={{ borderColor: 'var(--border)', color: 'var(--ink)' }}
+                    style={{ backgroundColor: 'var(--inset)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                   />
                   <button
                     onClick={() => handleIncrement(item.id, item.count)}
                     className="w-8 h-8 rounded flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--border)', color: 'var(--ink)' }}
+                    style={{ backgroundColor: 'var(--border)', color: 'var(--text-primary)' }}
                   >
                     +
                   </button>
@@ -217,7 +217,7 @@ export default function MainPage() {
         ) : (
           <p
             className="text-sm"
-            style={{ color: 'var(--ink)' }}
+            style={{ color: 'var(--text-primary)' }}
           >
             Нет доступных товаров
           </p>
@@ -228,7 +228,7 @@ export default function MainPage() {
       {isSuccessModalOpen && lastPurchase && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ backgroundColor: 'rgba(41, 37, 36, 0.5)' }}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
         >
           <div
             className="max-w-md w-full p-8 rounded-lg"
@@ -255,7 +255,7 @@ export default function MainPage() {
               </div>
               <h2
                 className="text-xl font-semibold mb-4"
-                style={{ color: 'var(--ink)' }}
+                style={{ color: 'var(--text-primary)' }}
               >
                 Покупка успешна!
               </h2>
@@ -263,19 +263,19 @@ export default function MainPage() {
                 className="text-left p-4 rounded mb-6"
                 style={{ backgroundColor: 'var(--success-bg)' }}
               >
-                <p style={{ color: 'var(--ink)' }}>
+                <p style={{ color: 'var(--text-primary)' }}>
                   <strong>ID транзакции:</strong> {lastPurchase.id}
                 </p>
-                <p style={{ color: 'var(--ink)' }}>
+                <p style={{ color: 'var(--text-primary)' }}>
                   <strong>ID товара:</strong> {lastPurchase.item_id}
                 </p>
-                <p style={{ color: 'var(--ink)' }}>
+                <p style={{ color: 'var(--text-primary)' }}>
                   <strong>Количество:</strong> {lastPurchase.count}
                 </p>
-                <p style={{ color: 'var(--ink)' }}>
+                <p style={{ color: 'var(--text-primary)' }}>
                   <strong>Сумма:</strong> {lastPurchase.price}
                 </p>
-                <p style={{ color: 'var(--ink)' }}>
+                <p style={{ color: 'var(--text-primary)' }}>
                   <strong>Дата:</strong> {new Date(lastPurchase.created_at).toLocaleString()}
                 </p>
               </div>

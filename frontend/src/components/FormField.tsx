@@ -24,7 +24,7 @@ export default function FormField({
       <label
         htmlFor={id}
         className="block mb-2 text-sm font-medium"
-        style={{ color: 'var(--ink)' }}
+        style={{ color: 'var(--text-primary)' }}
       >
         {label}
       </label>
@@ -38,8 +38,9 @@ export default function FormField({
         }}
         className="w-full px-4 py-2 rounded border focus:outline-none"
         style={{
+          backgroundColor: 'var(--inset)',
           borderColor: error ? 'var(--error)' : 'var(--border)',
-          color: 'var(--ink)',
+          color: 'var(--text-primary)',
         }}
         placeholder={placeholder}
       />

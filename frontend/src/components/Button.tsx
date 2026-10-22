@@ -18,7 +18,7 @@ export default function Button({
   style,
 }: ButtonProps) {
   const buttonStyle = {
-    backgroundColor: style?.backgroundColor || 'var(--primary)',
+    backgroundColor: style?.backgroundColor || 'var(--accent)',
     ...style,
   };
 
@@ -28,7 +28,17 @@ export default function Button({
       disabled={disabled || isLoading}
       onClick={onClick}
       style={buttonStyle}
-      className={`${fullWidth ? 'w-full' : ''} py-2 px-4 rounded text-white font-medium transition-colors hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed`}
+      className={`${fullWidth ? 'w-full' : ''} py-2 px-4 rounded text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+      onMouseEnter={(e) => {
+        if (!disabled && !isLoading && !style?.backgroundColor) {
+          e.currentTarget.style.backgroundColor = 'var(--accent-hover)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled && !isLoading && !style?.backgroundColor) {
+          e.currentTarget.style.backgroundColor = 'var(--accent)';
+        }
+      }}
     >
       {isLoading ? 'Загрузка...' : children}
     </button>

@@ -85,20 +85,26 @@
 
 <design_rules>
     ЗАПРЕЩЁННЫЕ ЭЛЕМЕНТЫ:
+    - Неоновые акценты (циан, фиолетовый, лайм)
+    - Градиенты на фоне
+    - Box-shadow со свечением
+    - Стеклянные панели (glassmorphism)
+    - Чистый #000000 и #FFFFFF
     - Градиенты с indigo/purple/violet (#6366f1, #8b5cf6, #a855f7 и близкие оттенки)
-    - Стеклянные/glassmorphism эффекты и полупрозрачные размытые панели
     - Центрированный hero + три одинаковые карточки с иконками под ним
     - Одинаковый border-radius (например, везде 16px) и одинаковые тени у всех карточек
     - Неоновые свечения (box-shadow с насыщенным цветом) и градиентный текст на нескольких заголовках
-    - Чистый белый фон (#FFFFFF) и чистый чёрный текст (#000000)
 
-    ЦВЕТОВАЯ ПАЛИТРА:
-    - Canvas (основной фон): #FFFBEB
-    - Surface (карточки, панели): #FEF3C7
-    - Ink / основной текст: #292524
-    - Primary accent: #A16207
-    - Secondary accent: #F59E0B
-    - Muted text: #78716C
+    ЦВЕТОВАЯ ПАЛИТРА (тёмная тема):
+    - Canvas / Base (основной фон): #1C1C1E (не #000000)
+    - Surface / Raised (карточки, панели): #2A2A2D
+    - Inset / Input (поля ввода, футер): #151517
+    - Text Primary: #F2F2F7 (не #FFFFFF)
+    - Text Secondary: rgba(242, 242, 247, 0.6)
+    - Accent / CTA: #B8935A (приглушённая латунь — единственный акцент)
+    - Accent Hover: #C9A36B
+    - Border / Divider: #3A3A3D
+    - Muted / Disabled: #5C5C61
 
     СТРУКТУРА И ЛАЙАУТ:
     - Разрушать однородность: чередовать секции с разной шириной, padding и визуальным весом
@@ -108,19 +114,21 @@
     - Внутренние отступы карточки не должны быть больше внешних отступов между блоками (правило близости)
 
     CSS ПЕРЕМЕННЫЕ (globals.css):
-    - --canvas: #FFFBEB
-    - --surface: #FEF3C7
-    - --ink: #292524
-    - --primary: #A16207
-    - --secondary: #F59E0B
-    - --muted: #78716C
-    - --error: #DC2626
-    - --success: #059669
-    - --warning: #D97706
-    - --info: #0891B2
-    - --disabled: #D6D3D1
-    - --border: #E7E5E4
-    - --shadow: rgba(41, 37, 36, 0.08)
+    - --canvas: #1C1C1E
+    - --surface: #2A2A2D
+    - --inset: #151517
+    - --text-primary: #F2F2F7
+    - --text-secondary: rgba(242, 242, 247, 0.6)
+    - --accent: #B8935A
+    - --accent-hover: #C9A36B
+    - --border: #3A3A3D
+    - --muted: #5C5C61
+    - --error: #FF453A
+    - --success: #30D158
+    - --warning: #FF9F0A
+    - --info: #0A84FF
+    - --disabled: #5C5C61
+    - --shadow: rgba(0, 0, 0, 0.3)
 </design_rules>
 
 <output>

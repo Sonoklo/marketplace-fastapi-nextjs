@@ -39,9 +39,9 @@ export default function DashboardPage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--background-color)' }}
+        style={{ backgroundColor: 'var(--canvas)' }}
       >
-        <p style={{ color: 'var(--text)' }}>Загрузка...</p>
+        <p style={{ color: 'var(--text-primary)' }}>Загрузка...</p>
       </div>
     );
   }
@@ -50,9 +50,9 @@ export default function DashboardPage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--background-color)' }}
+        style={{ backgroundColor: 'var(--canvas)' }}
       >
-        <p style={{ color: 'var(--text)' }}>Ошибка загрузки профиля</p>
+        <p style={{ color: 'var(--text-primary)' }}>Ошибка загрузки профиля</p>
       </div>
     );
   }
@@ -73,7 +73,7 @@ export default function DashboardPage() {
       >
         <h1
           className="text-xl font-semibold"
-          style={{ color: 'var(--ink)' }}
+          style={{ color: 'var(--text-primary)' }}
         >
           Dashboard
         </h1>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
       <div className="max-w-6xl mx-auto p-8">
         <h2
           className="text-2xl font-semibold mb-6"
-          style={{ color: 'var(--ink)' }}
+          style={{ color: 'var(--text-primary)' }}
         >
           Добро пожаловать, {profile?.username}!
         </h2>
@@ -104,13 +104,13 @@ export default function DashboardPage() {
           >
             <h3
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--ink)' }}
+              style={{ color: 'var(--text-primary)' }}
             >
               Выставленные товары
             </h3>
             <p
               className="text-3xl font-semibold"
-              style={{ color: 'var(--primary)' }}
+              style={{ color: 'var(--accent)' }}
             >
               {totalItems}
             </p>
@@ -122,7 +122,7 @@ export default function DashboardPage() {
           >
             <h3
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--ink)' }}
+              style={{ color: 'var(--text-primary)' }}
             >
               Покупки
             </h3>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
           >
             <h3
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--ink)' }}
+              style={{ color: 'var(--text-primary)' }}
             >
               Всего потрачено
             </h3>
@@ -160,7 +160,7 @@ export default function DashboardPage() {
         >
           <h3
             className="text-lg font-semibold mb-4"
-            style={{ color: 'var(--ink)' }}
+            style={{ color: 'var(--text-primary)' }}
           >
             Быстрые действия
           </h3>
