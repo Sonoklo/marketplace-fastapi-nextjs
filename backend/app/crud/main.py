@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from jose import jwt
 from fastapi import HTTPException, status
 
-from app.models.models import Account, Item, Purchase
+from app.models.models import Account, Item, Purchase, Category
 from app.core.security import get_password_hash, verify_password
 from app.core.config import settings
 from app.schemas.schemas import *
@@ -35,16 +35,28 @@ def get_account(username:str, password:str, db:Session) -> Account:
     return account
 
 def get_account_items(user_id:int, db:Session) -> list[Item]:
-    return db.query(Item).filter_by(owner_id=user_id).all()
+    return db.query(Item).filter_by(user_id=user_id).all()
 
 def get_account_purchases(user_id:int, db:Session) -> list[Purchase]:
-    return db.query(Purchase).filter_by(purchaser_id=user_id).all()
+    return db.query(Purchase).filter_by(account_id=user_id).all()
 
 def get_profile(user_id:int, db:Session) -> ProfileResponse:
     account: Account = get_account_by_id(user_id, db)
     items: list[Item] = get_account_items(user_id, db)
     purchases: list[Purchase] = get_account_purchases(user_id, db)
-    return ProfileResponse(username=account.username, email=account.email, items=items, purchases=purchases)
+    return ProfileResponse(id=account.id, username=account.username, email=account.email, items=items, purchases=purchases)
+
+def update_account(account:AccountUpdate, db:Session, user_id:int) -> Account:
+    db_account: Account = get_account_by_id(user_id, db)
+    if account.username:
+        db_account.username = account.username
+    if account.email:
+        db_account.email = account.email
+    if account.password:
+        db_account.password = get_password_hash(account.password)
+    db.commit()
+    db.refresh(db_account)
+    return db_account
 
 def create_access_token(data:dict)->str:
     to_encode=data.copy()
@@ -60,31 +72,68 @@ def verify_access_token(token:str) -> Optional[dict]:
     except:
         return None
         
-def get_items(user_id:int, db:Session) -> list[ItemResponse]:
-    items: list[Item] = db.query(Item).filter_by(user_id=user_id).all()
+def get_items(db:Session) -> list[ItemResponse]:
+    items: list[Item] = db.query(Item).all()
     return items
 
 def create_item(item: ItemCreate, db: Session, user_id: int) -> Item:
-    db_item = Item(name=item.name, description=item.description, count=item.count, price=item.price, category=item.category, user_id=user_id)
+    category_names = {name.strip() for name in item.categories.split(",")}
+    categories = []
+    for name in category_names:
+        category = db.query(Category).filter_by(name=name).first()
+        if category is None:
+            category = Category(name=name)
+            db.add(category)
+            db.flush()
+        categories.append(category)
+    db_item = Item(
+        name=item.name,
+        description=item.description,
+        count=item.count,
+        price=item.price,
+        user_id=user_id,
+        categories=categories,
+    )
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
     return db_item
 
-def update_item(item_id:int, item:ItemUpdate, db:Session) -> ItemResponse:
+def update_item(user_id:int,item_id:int, item:ItemUpdate, db:Session) -> ItemResponse:
     db_item= db.query(Item).filter_by(id=item_id).first()
     if not db_item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Предмет не найден")
-    db_item.name = item.name
-    db_item.price = item.price
+    if db_item.user_id != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет прав на редактирование этого товара")
+    if item.name:
+        db_item.name = item.name
+    if item.description:
+        db_item.description = item.description
+    if item.price:
+        db_item.price = item.price
+    if item.count:
+        db_item.count = item.count
+    if item.category:
+        category_names = {name.strip() for name in item.category}
+        categories = []
+        for name in category_names:
+            category = db.query(Category).filter_by(name=name).first()
+            if category is None:
+                category = Category(name=name)
+                db.add(category)
+                db.flush()
+            categories.append(category)
+        db_item.categories = categories
     db.commit()
     db.refresh(db_item)
     return db_item
 
-def delete_item(item_id:int, db:Session) -> None:
+def delete_item(user_id:int,item_id:int, db:Session) -> None:
     db_item = db.query(Item).filter_by(id=item_id).first()
     if not db_item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Предмет не найден")
+    if db_item.user_id != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Нет прав на удаление этого товара")
     db.delete(db_item)
     db.commit()
 
@@ -97,3 +146,19 @@ def get_item(item_id:int, db:Session) -> ItemResponse:
 def get_items_by_user(user_id:int, db:Session) -> list[ItemResponse]:
     items: list[Item] = db.query(Item).filter_by(user_id=user_id).all()
     return items
+
+def buy_item(user_id:int, item_id:int, count:int, db:Session) -> PurchaseResponse:
+    db_item = get_item(item_id, db)
+    if db_item.user_id == user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Запрещено покупать свой товар")
+    if db_item.count < count:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Недостаточно товара")
+    purchase = Purchase(account_id=user_id, item_id=item_id, count=count, price=count*db_item.price)
+    db_item.count -= count
+    db.add(db_item)
+    db.add(purchase)
+    db.commit()
+    db.refresh(db_item)
+    db.refresh(purchase)
+    purchase.item = db_item
+    return purchase
