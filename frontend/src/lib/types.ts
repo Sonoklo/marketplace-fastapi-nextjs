@@ -27,20 +27,57 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface CategoryResponse {
+  id: number;
+  name: string;
+}
+
 export interface ItemCreate {
   name: string;
-  description: string;
+  description?: string;
   price: number;
   count: number;
-  category: string[];
+  categories: string;
 }
 
 export interface ItemResponse {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   price: number;
   count: number;
-  category: string[];
+  categories: CategoryResponse[];
   user_id: number;
+}
+
+export interface ItemUpdate {
+  name?: string;
+  description?: string;
+  count?: number;
+  price?: number;
+  category?: string[];
+}
+
+export interface AccountUpdate {
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
+export interface PurchaseResponse {
+  id: number;
+  account_id: number;
+  item_id: number;
+  price: number;
+  count: number;
+  created_at: string;
+  item?: ItemResponse;
+}
+
+export interface ProfileResponse {
+  id: number;
+  username: string;
+  email: string;
+  items: ItemResponse[];
+  purchases: PurchaseResponse[];
 }

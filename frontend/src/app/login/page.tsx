@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi } from '@/lib/auth';
@@ -16,6 +16,13 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState('');
   const [generalError, setGeneralError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      router.push('/dashboard');
+    }
+  }, []);
 
   const validateForm = () => {
     let isValid = true;

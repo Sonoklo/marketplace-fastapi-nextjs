@@ -5,21 +5,29 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import FormField from '@/components/FormField';
 import ErrorAlert from '@/components/ErrorAlert';
-import { ItemCreate } from '@/lib/types';
 import { authApi } from '@/lib/auth';
+import { itemsApi } from '@/lib/items';
+import { ItemCreate, ItemUpdate, ProfileResponse, ItemResponse } from '@/lib/types';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [profile, setProfile] = useState<ProfileResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<ItemResponse | null>(null);
+  const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
+
   const [editUsername, setEditUsername] = useState('');
+  const [editEmail, setEditEmail] = useState('');
   const [editPassword, setEditPassword] = useState('');
   const [usernameError, setUsernameError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [generalError, setGeneralError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   const [itemName, setItemName] = useState('');
   const [itemDescription, setItemDescription] = useState('');
@@ -34,42 +42,99 @@ export default function ProfilePage() {
   const [itemGeneralError, setItemGeneralError] = useState('');
   const [isItemLoading, setIsItemLoading] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    try {
+      const data = await authApi.getProfile();
+      setProfile(data);
+    } catch (error: any) {
+      console.error('Failed to load profile:', error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('access_token');
+        router.push('/login');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     router.push('/login');
   };
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const profile = await authApi.getProfile();
-        setUsername(profile.username);
-      } catch (error: any) {
-        if (error.response?.status === 401) {
-          localStorage.removeItem('access_token');
-          router.push('/login');
-        } else {
-          setGeneralError('Ошибка при загрузке профиля');
-        }
-      } finally {
-        setIsProfileLoading(false);
-      }
-    };
-
-    loadProfile();
-  }, [router]);
-
   const handleEditProfile = () => {
-    setEditUsername(username);
+    if (!profile) return;
+    setEditUsername(profile.username);
+    setEditEmail(profile.email);
     setEditPassword('');
     setUsernameError('');
+    setEmailError('');
     setPasswordError('');
     setGeneralError('');
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setIsEditModalOpen(false);
+  };
+
+  const validateEditForm = () => {
+    let isValid = true;
+    setUsernameError('');
+    setEmailError('');
+    setPasswordError('');
+    setGeneralError('');
+
+    if (!editUsername.trim()) {
+      setUsernameError('Поле "Username" обязательно для заполнения');
+      isValid = false;
+    }
+
+    if (!editEmail.trim()) {
+      setEmailError('Поле "Email" обязательно для заполнения');
+      isValid = false;
+    }
+
+    if (editPassword && editPassword.length < 8) {
+      setPasswordError('Пароль должен содержать минимум 8 символов');
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateEditForm()) {
+      return;
+    }
+
+    setGeneralError('');
+    setIsProfileLoading(true);
+
+    try {
+      await authApi.updateProfile({
+        username: editUsername,
+        email: editEmail,
+        password: editPassword || undefined,
+      });
+      await loadProfile();
+      setIsEditModalOpen(false);
+    } catch (error: any) {
+      setGeneralError(error.response?.data?.detail || 'Ошибка при сохранении профиля');
+    } finally {
+      setIsProfileLoading(false);
+    }
   };
 
   const handleCreateItem = () => {
@@ -91,25 +156,6 @@ export default function ProfilePage() {
     setIsItemModalOpen(false);
   };
 
-  const validateEditForm = () => {
-    let isValid = true;
-    setUsernameError('');
-    setPasswordError('');
-    setGeneralError('');
-
-    if (!editUsername.trim()) {
-      setUsernameError('Поле "Username" обязательно для заполнения');
-      isValid = false;
-    }
-
-    if (!editPassword) {
-      setPasswordError('Поле "Пароль" обязательно для заполнения');
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
   const validateItemForm = () => {
     let isValid = true;
     setItemNameError('');
@@ -121,11 +167,6 @@ export default function ProfilePage() {
 
     if (!itemName.trim()) {
       setItemNameError('Поле "Название" обязательно для заполнения');
-      isValid = false;
-    }
-
-    if (!itemDescription.trim()) {
-      setItemDescriptionError('Поле "Описание" обязательно для заполнения');
       isValid = false;
     }
 
@@ -153,28 +194,6 @@ export default function ProfilePage() {
     return isValid;
   };
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateEditForm()) {
-      return;
-    }
-
-    setGeneralError('');
-    setIsLoading(true);
-
-    try {
-      // TODO: отправить запрос на endpoint для обновления профиля
-      console.log('Сохранение профиля:', { username: editUsername, password: editPassword });
-      setUsername(editUsername);
-      setIsModalOpen(false);
-    } catch (error: any) {
-      setGeneralError('Ошибка при сохранении профиля');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -188,32 +207,112 @@ export default function ProfilePage() {
     try {
       const itemData: ItemCreate = {
         name: itemName,
-        description: itemDescription,
+        description: itemDescription || undefined,
         price: Number(itemPrice),
         count: Number(itemCount),
-        category: itemCategory,
+        categories: itemCategory,
       };
-      await authApi.createItem(itemData);
+      await itemsApi.createItem(itemData);
+      await loadProfile();
       setIsItemModalOpen(false);
-      setItemName('');
-      setItemDescription('');
-      setItemPrice('');
-      setItemCount('');
-      setItemCategory('');
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        setItemGeneralError('Не авторизован');
-      } else if (error.response?.status === 400) {
-        setItemGeneralError('Неверные данные товара');
-      } else if (error.response?.status === 500) {
-        setItemGeneralError('Ошибка сервера. Попробуйте позже');
-      } else {
-        setItemGeneralError('Ошибка при создании товара');
-      }
+      setItemGeneralError(error.response?.data?.detail || 'Ошибка при создании товара');
     } finally {
       setIsItemLoading(false);
     }
   };
+
+  const handleEditItem = (item: ItemResponse) => {
+    setEditingItem(item);
+    setItemName(item.name);
+    setItemDescription(item.description || '');
+    setItemPrice(item.price.toString());
+    setItemCount(item.count.toString());
+    setItemCategory(item.categories.map(c => c.name).join(', '));
+    setItemNameError('');
+    setItemDescriptionError('');
+    setItemPriceError('');
+    setItemCountError('');
+    setItemCategoryError('');
+    setItemGeneralError('');
+    setIsItemModalOpen(true);
+  };
+
+  const handleDeleteItem = (itemId: number) => {
+    setDeletingItemId(itemId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeletingItemId(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingItemId) return;
+
+    try {
+      await itemsApi.deleteItem(deletingItemId);
+      await loadProfile();
+      setIsDeleteModalOpen(false);
+      setDeletingItemId(null);
+    } catch (error: any) {
+      console.error('Failed to delete item:', error);
+    }
+  };
+
+  const handleUpdateItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateItemForm()) {
+      return;
+    }
+
+    if (!editingItem) return;
+
+    setItemGeneralError('');
+    setIsItemLoading(true);
+
+    try {
+      const itemData: ItemUpdate = {
+        name: itemName,
+        description: itemDescription || undefined,
+        price: Number(itemPrice),
+        count: Number(itemCount),
+        category: itemCategory.split(',').map(c => c.trim()).filter(c => c),
+      };
+      await itemsApi.updateItem(editingItem.id, itemData);
+      await loadProfile();
+      setIsItemModalOpen(false);
+      setEditingItem(null);
+    } catch (error: any) {
+      setItemGeneralError(error.response?.data?.detail || 'Ошибка при обновлении товара');
+    } finally {
+      setIsItemLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--background-color)' }}
+      >
+        <p style={{ color: 'var(--text)' }}>Загрузка...</p>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--background-color)' }}
+      >
+        <p style={{ color: 'var(--text)' }}>Ошибка загрузки профиля</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -236,36 +335,41 @@ export default function ProfilePage() {
 
       {/* Profile Content */}
       <div className="max-w-4xl mx-auto p-8">
-        {isProfileLoading ? (
-          <div
-            className="p-6 rounded-lg text-center"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
-          >
-            <p style={{ color: 'var(--text)' }}>Загрузка профиля...</p>
-          </div>
-        ) : (
-          <>
-            {/* User Info */}
-            <div
-              className="p-6 rounded-lg mb-8"
-              style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+        {/* User Info */}
+        <div
+          className="p-6 rounded-lg mb-8"
+          style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+        >
+          <div className="mb-4">
+            <p
+              className="text-sm font-medium mb-2"
+              style={{ color: 'var(--text)' }}
             >
-              <div className="mb-4">
-                <p
-                  className="text-sm font-medium mb-2"
-                  style={{ color: 'var(--text)' }}
-                >
-                  Username
-                </p>
-                <p
-                  className="text-lg"
-                  style={{ color: 'var(--text)' }}
-                >
-                  {username}
-                </p>
-              </div>
-              <Button onClick={handleEditProfile}>Редактировать профиль</Button>
-            </div>
+              Username
+            </p>
+            <p
+              className="text-lg"
+              style={{ color: 'var(--text)' }}
+            >
+              {profile?.username}
+            </p>
+          </div>
+          <div className="mb-4">
+            <p
+              className="text-sm font-medium mb-2"
+              style={{ color: 'var(--text)' }}
+            >
+              Email
+            </p>
+            <p
+              className="text-lg"
+              style={{ color: 'var(--text)' }}
+            >
+              {profile?.email}
+            </p>
+          </div>
+          <Button onClick={handleEditProfile}>Редактировать профиль</Button>
+        </div>
 
         {/* User's Items */}
         <div
@@ -283,12 +387,58 @@ export default function ProfilePage() {
               Создать товар
             </Button>
           </div>
-          <p
-            className="text-sm"
-            style={{ color: 'var(--text)' }}
-          >
-            У вас пока нет выставленных товаров
-          </p>
+          {profile?.items && profile.items.length > 0 ? (
+            <div className="space-y-4">
+              {profile.items.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-4 rounded border"
+                  style={{ borderColor: 'var(--border)' }}
+                >
+                  <h3
+                    className="text-lg font-semibold mb-2"
+                    style={{ color: 'var(--text)' }}
+                  >
+                    {item.name}
+                  </h3>
+                  <p
+                    className="text-sm mb-2"
+                    style={{ color: 'var(--text)' }}
+                  >
+                    {item.description}
+                  </p>
+                  <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--text)' }}>
+                    <span>Цена: {item.price}</span>
+                    <span>Количество: {item.count}</span>
+                    <span>Категории: {item.categories.map(c => c.name).join(', ')}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleEditItem(item)}
+                      fullWidth={false}
+                      style={{ backgroundColor: 'var(--info)' }}
+                    >
+                      Изменить
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteItem(item.id)}
+                      fullWidth={false}
+                      style={{ backgroundColor: 'var(--error)' }}
+                    >
+                      Удалить
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p
+              className="text-sm"
+              style={{ color: 'var(--text)' }}
+            >
+              У вас пока нет выставленных товаров
+            </p>
+          )}
         </div>
 
         {/* Purchased Items */}
@@ -302,19 +452,39 @@ export default function ProfilePage() {
           >
             Товары, которые вы купили
           </h2>
-          <p
-            className="text-sm"
-            style={{ color: 'var(--text)' }}
-          >
-            Вы пока ничего не купили
-          </p>
+          {profile?.purchases && profile.purchases.length > 0 ? (
+            <div className="space-y-4">
+              {profile.purchases.map((purchase) => {
+                const item = purchase.item || profile.items?.find(i => i.id === purchase.item_id);
+                return (
+                  <div
+                    key={purchase.id}
+                    className="p-4 rounded border"
+                    style={{ borderColor: 'var(--border)' }}
+                  >
+                    <div className="flex gap-4 text-sm" style={{ color: 'var(--text)' }}>
+                      <span className="font-semibold">{item?.name || `Товар #${purchase.item_id}`}</span>
+                      <span>Цена: {purchase.price}</span>
+                      <span>Количество: {purchase.count}</span>
+                      <span>Дата: {new Date(purchase.created_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p
+              className="text-sm"
+              style={{ color: 'var(--text)' }}
+            >
+              Вы пока ничего не купили
+            </p>
+          )}
         </div>
-          </>
-        )}
       </div>
 
       {/* Edit Profile Modal */}
-      {isModalOpen && (
+      {isEditModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
@@ -345,8 +515,19 @@ export default function ProfilePage() {
               />
 
               <FormField
+                id="edit-email"
+                label="Email"
+                type="email"
+                value={editEmail}
+                onChange={setEditEmail}
+                onClearError={() => setEmailError('')}
+                error={emailError}
+                placeholder="Введите новый email"
+              />
+
+              <FormField
                 id="edit-password"
-                label="Пароль"
+                label="Пароль (оставьте пустым, если не хотите менять)"
                 type="password"
                 value={editPassword}
                 onChange={setEditPassword}
@@ -366,7 +547,7 @@ export default function ProfilePage() {
                 </Button>
                 <Button
                   type="submit"
-                  isLoading={isLoading}
+                  isLoading={isProfileLoading}
                   fullWidth={false}
                 >
                   Сохранить
@@ -377,7 +558,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* Create Item Modal */}
+      {/* Create/Edit Item Modal */}
       {isItemModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
@@ -391,10 +572,10 @@ export default function ProfilePage() {
               className="text-xl font-semibold mb-6"
               style={{ color: 'var(--text)' }}
             >
-              Создать товар
+              {editingItem ? 'Редактировать товар' : 'Создать товар'}
             </h2>
 
-            <form onSubmit={handleSaveItem}>
+            <form onSubmit={editingItem ? handleUpdateItem : handleSaveItem}>
               {itemGeneralError && <ErrorAlert message={itemGeneralError} />}
 
               <FormField
@@ -443,19 +624,22 @@ export default function ProfilePage() {
 
               <FormField
                 id="item-category"
-                label="Категория"
+                label="Категории (через запятую)"
                 type="text"
                 value={itemCategory}
                 onChange={setItemCategory}
                 onClearError={() => setItemCategoryError('')}
                 error={itemCategoryError}
-                placeholder="Введите категорию"
+                placeholder="Введите категории через запятую"
               />
 
               <div className="flex gap-4 mt-6">
                 <Button
                   type="button"
-                  onClick={handleCloseItemModal}
+                  onClick={() => {
+                    handleCloseItemModal();
+                    setEditingItem(null);
+                  }}
                   fullWidth={false}
                   style={{ backgroundColor: 'var(--disabled)' }}
                 >
@@ -466,10 +650,96 @@ export default function ProfilePage() {
                   isLoading={isItemLoading}
                   fullWidth={false}
                 >
-                  Создать
+                  {editingItem ? 'Сохранить' : 'Создать'}
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <div
+            className="max-w-md w-full p-8 rounded-lg"
+            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+          >
+            <h2
+              className="text-xl font-semibold mb-4"
+              style={{ color: 'var(--text)' }}
+            >
+              Подтверждение удаления
+            </h2>
+            <p
+              className="mb-6"
+              style={{ color: 'var(--text)' }}
+            >
+              Вы уверены, что хотите удалить этот товар? Это действие нельзя отменить.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                onClick={handleCloseDeleteModal}
+                fullWidth={false}
+                style={{ backgroundColor: 'var(--disabled)' }}
+              >
+                Отмена
+              </Button>
+              <Button
+                type="button"
+                onClick={handleConfirmDelete}
+                fullWidth={false}
+                style={{ backgroundColor: 'var(--error)' }}
+              >
+                Удалить
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <div
+            className="max-w-md w-full p-8 rounded-lg"
+            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+          >
+            <h2
+              className="text-xl font-semibold mb-4"
+              style={{ color: 'var(--text)' }}
+            >
+              Подтверждение удаления
+            </h2>
+            <p
+              className="mb-6"
+              style={{ color: 'var(--text)' }}
+            >
+              Вы уверены, что хотите удалить этот товар?
+            </p>
+            <div className="flex gap-4">
+              <Button
+                onClick={handleCloseDeleteModal}
+                fullWidth={false}
+                style={{ backgroundColor: 'var(--disabled)' }}
+              >
+                Отмена
+              </Button>
+              <Button
+                onClick={handleConfirmDelete}
+                fullWidth={false}
+                style={{ backgroundColor: 'var(--error)' }}
+              >
+                Удалить
+              </Button>
+            </div>
           </div>
         </div>
       )}
