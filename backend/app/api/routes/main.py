@@ -51,6 +51,10 @@ def update_profile(account:AccountUpdate, db:Session=Depends(get_db), current_us
 def main(db:Session=Depends(get_db)) -> list[ItemResponse]:
     return crud.get_items(db=db)
 
+@router_main.post("/", response_model=PurchaseResponse, status_code=status.HTTP_201_CREATED)
+def buy_item(item: PurchaseRequest, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> PurchaseResponse:
+    return crud.buy_item(item_id=item.item_id, db=db, user_id=current_user.id, count=item.count)
+
 @router_profile.post("/items", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
 def add_item(item: ItemCreate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Item:
     return crud.create_item(item=item, db=db, user_id=current_user.id)
