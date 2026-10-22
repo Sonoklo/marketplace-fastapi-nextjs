@@ -317,16 +317,16 @@ export default function ProfilePage() {
   return (
     <div
       className="min-h-screen"
-      style={{ backgroundColor: 'var(--background-color)' }}
+      style={{ backgroundColor: 'var(--canvas)' }}
     >
       {/* Header */}
       <div
         className="flex justify-between items-center px-8 py-4"
-        style={{ backgroundColor: '#ffffff', borderBottom: '1px solid var(--border)' }}
+        style={{ backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
         <h1
           className="text-xl font-semibold"
-          style={{ color: 'var(--text)' }}
+          style={{ color: 'var(--ink)' }}
         >
           Профиль
         </h1>
@@ -338,18 +338,18 @@ export default function ProfilePage() {
         {/* User Info */}
         <div
           className="p-6 rounded-lg mb-8"
-          style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
         >
           <div className="mb-4">
             <p
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Username
             </p>
             <p
               className="text-lg"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               {profile?.username}
             </p>
@@ -357,13 +357,13 @@ export default function ProfilePage() {
           <div className="mb-4">
             <p
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Email
             </p>
             <p
               className="text-lg"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               {profile?.email}
             </p>
@@ -374,12 +374,12 @@ export default function ProfilePage() {
         {/* User's Items */}
         <div
           className="p-6 rounded-lg mb-8"
-          style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
         >
           <div className="flex justify-between items-center mb-4">
             <h2
               className="text-lg font-semibold"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Товары, которые вы выставили
             </h2>
@@ -397,17 +397,17 @@ export default function ProfilePage() {
                 >
                   <h3
                     className="text-lg font-semibold mb-2"
-                    style={{ color: 'var(--text)' }}
+                    style={{ color: 'var(--ink)' }}
                   >
                     {item.name}
                   </h3>
                   <p
                     className="text-sm mb-2"
-                    style={{ color: 'var(--text)' }}
+                    style={{ color: 'var(--ink)' }}
                   >
                     {item.description}
                   </p>
-                  <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--text)' }}>
+                  <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--ink)' }}>
                     <span>Цена: {item.price}</span>
                     <span>Количество: {item.count}</span>
                     <span>Категории: {item.categories.map(c => c.name).join(', ')}</span>
@@ -434,7 +434,7 @@ export default function ProfilePage() {
           ) : (
             <p
               className="text-sm"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               У вас пока нет выставленных товаров
             </p>
@@ -444,11 +444,11 @@ export default function ProfilePage() {
         {/* Purchased Items */}
         <div
           className="p-6 rounded-lg"
-          style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
         >
           <h2
             className="text-lg font-semibold mb-4"
-            style={{ color: 'var(--text)' }}
+            style={{ color: 'var(--ink)' }}
           >
             Товары, которые вы купили
           </h2>
@@ -462,7 +462,7 @@ export default function ProfilePage() {
                     className="p-4 rounded border"
                     style={{ borderColor: 'var(--border)' }}
                   >
-                    <div className="flex gap-4 text-sm" style={{ color: 'var(--text)' }}>
+                    <div className="flex gap-4 text-sm" style={{ color: 'var(--ink)' }}>
                       <span className="font-semibold">{item?.name || `Товар #${purchase.item_id}`}</span>
                       <span>Цена: {purchase.price}</span>
                       <span>Количество: {purchase.count}</span>
@@ -475,7 +475,7 @@ export default function ProfilePage() {
           ) : (
             <p
               className="text-sm"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Вы пока ничего не купили
             </p>
@@ -487,15 +487,15 @@ export default function ProfilePage() {
       {isEditModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          style={{ backgroundColor: 'rgba(41, 37, 36, 0.5)' }}
         >
           <div
             className="max-w-md w-full p-8 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
           >
             <h2
               className="text-xl font-semibold mb-6"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Редактировать профиль
             </h2>
@@ -562,15 +562,15 @@ export default function ProfilePage() {
       {isItemModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          style={{ backgroundColor: 'rgba(41, 37, 36, 0.5)' }}
         >
           <div
             className="max-w-md w-full p-8 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
           >
             <h2
               className="text-xl font-semibold mb-6"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               {editingItem ? 'Редактировать товар' : 'Создать товар'}
             </h2>
@@ -662,65 +662,21 @@ export default function ProfilePage() {
       {isDeleteModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          style={{ backgroundColor: 'rgba(41, 37, 36, 0.5)' }}
         >
           <div
             className="max-w-md w-full p-8 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
           >
             <h2
               className="text-xl font-semibold mb-4"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Подтверждение удаления
             </h2>
             <p
               className="mb-6"
-              style={{ color: 'var(--text)' }}
-            >
-              Вы уверены, что хотите удалить этот товар? Это действие нельзя отменить.
-            </p>
-            <div className="flex gap-4">
-              <Button
-                type="button"
-                onClick={handleCloseDeleteModal}
-                fullWidth={false}
-                style={{ backgroundColor: 'var(--disabled)' }}
-              >
-                Отмена
-              </Button>
-              <Button
-                type="button"
-                onClick={handleConfirmDelete}
-                fullWidth={false}
-                style={{ backgroundColor: 'var(--error)' }}
-              >
-                Удалить
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-        >
-          <div
-            className="max-w-md w-full p-8 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
-          >
-            <h2
-              className="text-xl font-semibold mb-4"
-              style={{ color: 'var(--text)' }}
-            >
-              Подтверждение удаления
-            </h2>
-            <p
-              className="mb-6"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Вы уверены, что хотите удалить этот товар?
             </p>

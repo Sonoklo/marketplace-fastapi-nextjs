@@ -64,16 +64,16 @@ export default function DashboardPage() {
   return (
     <div
       className="min-h-screen"
-      style={{ backgroundColor: 'var(--background-color)' }}
+      style={{ backgroundColor: 'var(--canvas)' }}
     >
       {/* Header */}
       <div
         className="flex justify-between items-center px-8 py-4"
-        style={{ backgroundColor: '#ffffff', borderBottom: '1px solid var(--border)' }}
+        style={{ backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
         <h1
           className="text-xl font-semibold"
-          style={{ color: 'var(--text)' }}
+          style={{ color: 'var(--ink)' }}
         >
           Dashboard
         </h1>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
       <div className="max-w-6xl mx-auto p-8">
         <h2
           className="text-2xl font-semibold mb-6"
-          style={{ color: 'var(--text)' }}
+          style={{ color: 'var(--ink)' }}
         >
           Добро пожаловать, {profile?.username}!
         </h2>
@@ -100,11 +100,11 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div
             className="p-6 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
           >
             <h3
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Выставленные товары
             </h3>
@@ -118,11 +118,11 @@ export default function DashboardPage() {
 
           <div
             className="p-6 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
           >
             <h3
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Покупки
             </h3>
@@ -136,11 +136,11 @@ export default function DashboardPage() {
 
           <div
             className="p-6 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
           >
             <h3
               className="text-sm font-medium mb-2"
-              style={{ color: 'var(--text)' }}
+              style={{ color: 'var(--ink)' }}
             >
               Всего потрачено
             </h3>
@@ -156,11 +156,11 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div
           className="p-6 rounded-lg"
-          style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
         >
           <h3
             className="text-lg font-semibold mb-4"
-            style={{ color: 'var(--text)' }}
+            style={{ color: 'var(--ink)' }}
           >
             Быстрые действия
           </h3>

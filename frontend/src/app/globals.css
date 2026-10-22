@@ -1,31 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #FFFBEB;
+  --surface: #FEF3C7;
+  --ink: #292524;
+  --primary: #A16207;
+  --secondary: #F59E0B;
+  --muted: #78716C;
 
-  --primary: #1976d2;
-  --secondary: #dc004e;
-  --background-color: #f5f5f5;
-  --text: #333;
-  --error: #f44336;
-  --success: #4caf50;
-  --warning: #ff9800;
-  --info: #2196f3;
-  --disabled: #ccc;
-  --border: #ddd;
-  --shadow: rgba(0, 0, 0, 0.1);
-  --hover: rgba(0, 0, 0, 0.05);
-  --active: rgba(0, 0, 0, 0.1);
-  --focus: rgba(0, 0, 0, 0.2);
-  --loading: rgba(0, 0, 0, 0.05);
-  --success-bg: rgba(76, 175, 80, 0.1);
-  --error-bg: rgba(244, 67, 54, 0.1);
-  --warning-bg: rgba(255, 152, 0, 0.1);
-  --info-bg: rgba(33, 150, 243, 0.1);
-  --disabled-bg: rgba(204, 204, 204, 0.1);
-  --border-light: rgba(0, 0, 0, 0.12);
-  --border-dark: rgba(0, 0, 0, 0.23);
+  --background: var(--canvas);
+  --foreground: var(--ink);
+  --background-color: var(--canvas);
+  --text: var(--ink);
+
+  --error: #DC2626;
+  --success: #059669;
+  --warning: #D97706;
+  --info: #0891B2;
+  --disabled: #D6D3D1;
+  --border: #E7E5E4;
+  --shadow: rgba(41, 37, 36, 0.08);
+  --hover: rgba(161, 98, 7, 0.08);
+  --active: rgba(161, 98, 7, 0.12);
+  --focus: rgba(161, 98, 7, 0.2);
+  --loading: rgba(161, 98, 7, 0.1);
+  --success-bg: rgba(5, 150, 105, 0.1);
+  --error-bg: rgba(220, 38, 38, 0.1);
+  --warning-bg: rgba(217, 119, 6, 0.1);
+  --info-bg: rgba(8, 145, 178, 0.1);
+  --disabled-bg: rgba(214, 211, 209, 0.3);
+  --border-light: rgba(41, 37, 36, 0.08);
+  --border-dark: rgba(41, 37, 36, 0.16);
 
   --spacing-xs: 4px;
   --spacing-sm: 8px;

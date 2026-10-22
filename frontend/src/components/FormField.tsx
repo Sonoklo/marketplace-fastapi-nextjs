@@ -23,7 +23,8 @@ export default function FormField({
     <div className="mb-4">
       <label
         htmlFor={id}
-        className="block mb-2 text-sm font-medium text-gray-700"
+        className="block mb-2 text-sm font-medium"
+        style={{ color: 'var(--ink)' }}
       >
         {label}
       </label>
@@ -35,13 +36,15 @@ export default function FormField({
           onChange(e.target.value);
           if (error && onClearError) onClearError();
         }}
-        className={`w-full px-4 py-2 rounded border focus:outline-none ${
-          error ? 'border-red-500' : 'border-gray-300'
-        }`}
+        className="w-full px-4 py-2 rounded border focus:outline-none"
+        style={{
+          borderColor: error ? 'var(--error)' : 'var(--border)',
+          color: 'var(--ink)',
+        }}
         placeholder={placeholder}
       />
       {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
+        <p className="mt-1 text-sm" style={{ color: 'var(--error)' }}>{error}</p>
       )}
     </div>
   );

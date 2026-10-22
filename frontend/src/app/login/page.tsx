@@ -94,9 +94,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full p-8 rounded-lg bg-white shadow-lg">
-        <h2 className="text-center text-2xl font-semibold mb-8 text-gray-800">
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundColor: 'var(--canvas)' }}
+    >
+      <div
+        className="max-w-md w-full p-8 rounded-lg"
+        style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
+      >
+        <h2
+          className="text-2xl font-semibold mb-8"
+          style={{ color: 'var(--ink)' }}
+        >
           Вход в клиент панель
         </h2>
 
@@ -113,7 +122,10 @@ export default function LoginPage() {
             error={usernameError}
             placeholder="Введите логин"
           />
-          <p className="text-xs text-gray-500 mt-1 mb-4">
+          <p
+            className="text-xs mt-1 mb-4"
+            style={{ color: 'var(--muted)' }}
+          >
             Требования: 1-20 символов, только буквы, цифры и символ подчеркивания
           </p>
 
@@ -127,7 +139,10 @@ export default function LoginPage() {
             error={passwordError}
             placeholder="Введите пароль"
           />
-          <p className="text-xs text-gray-500 mt-1 mb-4">
+          <p
+            className="text-xs mt-1 mb-4"
+            style={{ color: 'var(--muted)' }}
+          >
             Требования: 8-128 символов, минимум одна заглавная буква, одна строчная, одна цифра и один специальный символ
           </p>
 
@@ -136,7 +151,8 @@ export default function LoginPage() {
           <div className="text-center mt-4">
             <Link
               href="/register"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              className="text-sm font-medium hover:opacity-80"
+              style={{ color: 'var(--primary)' }}
             >
               Зарегистрироваться
             </Link>

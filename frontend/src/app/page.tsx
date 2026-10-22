@@ -86,9 +86,9 @@ export default function MainPage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--background-color)' }}
+        style={{ backgroundColor: 'var(--canvas)' }}
       >
-        <p style={{ color: 'var(--text)' }}>Загрузка...</p>
+        <p style={{ color: 'var(--ink)' }}>Загрузка...</p>
       </div>
     );
   }
@@ -96,16 +96,16 @@ export default function MainPage() {
   return (
     <div
       className="min-h-screen"
-      style={{ backgroundColor: 'var(--background-color)' }}
+      style={{ backgroundColor: 'var(--canvas)' }}
     >
       {/* Header */}
       <div
         className="flex justify-between items-center px-8 py-4"
-        style={{ backgroundColor: '#ffffff', borderBottom: '1px solid var(--border)' }}
+        style={{ backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
       >
         <h1
           className="text-xl font-semibold"
-          style={{ color: 'var(--text)' }}
+          style={{ color: 'var(--ink)' }}
         >
           Маркетплейс
         </h1>
@@ -124,11 +124,11 @@ export default function MainPage() {
         </Button>
       </div>
 
-      {/* Items Grid */}
+      {/* Items Section */}
       <div className="max-w-7xl mx-auto p-8">
         <h2
           className="text-2xl font-semibold mb-6"
-          style={{ color: 'var(--text)' }}
+          style={{ color: 'var(--ink)' }}
         >
           Доступные товары
         </h2>
@@ -146,32 +146,36 @@ export default function MainPage() {
         )}
         {items.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((item) => (
+            {items.map((item, index) => (
               <div
                 key={item.id}
-                className="p-6 rounded-lg"
-                style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+                className="p-5 rounded-lg"
+                style={{
+                  backgroundColor: 'var(--surface)',
+                  boxShadow: 'var(--shadow)',
+                  borderRadius: index % 3 === 0 ? '12px' : index % 3 === 1 ? '8px' : '16px',
+                }}
               >
                 <h3
                   className="text-lg font-semibold mb-2"
-                  style={{ color: 'var(--text)' }}
+                  style={{ color: 'var(--ink)' }}
                 >
                   {item.name}
                 </h3>
                 <p
                   className="text-sm mb-4"
-                  style={{ color: 'var(--text)' }}
+                  style={{ color: 'var(--ink)' }}
                 >
                   {item.description || 'Нет описания'}
                 </p>
-                <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--text)' }}>
+                <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--ink)' }}>
                   <span>Цена: {item.price}</span>
                   <span>Доступно: {item.count}</span>
                 </div>
                 <div className="mb-4">
                   <p
                     className="text-sm mb-2"
-                    style={{ color: 'var(--text)' }}
+                    style={{ color: 'var(--ink)' }}
                   >
                     Категории: {item.categories.map(c => c.name).join(', ')}
                   </p>
@@ -180,7 +184,7 @@ export default function MainPage() {
                   <button
                     onClick={() => handleDecrement(item.id)}
                     className="w-8 h-8 rounded flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--border)', color: 'var(--text)' }}
+                    style={{ backgroundColor: 'var(--border)', color: 'var(--ink)' }}
                   >
                     -
                   </button>
@@ -191,12 +195,12 @@ export default function MainPage() {
                     value={itemQuantities[item.id] || 1}
                     onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                     className="w-16 text-center border rounded py-1"
-                    style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+                    style={{ borderColor: 'var(--border)', color: 'var(--ink)' }}
                   />
                   <button
                     onClick={() => handleIncrement(item.id, item.count)}
                     className="w-8 h-8 rounded flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--border)', color: 'var(--text)' }}
+                    style={{ backgroundColor: 'var(--border)', color: 'var(--ink)' }}
                   >
                     +
                   </button>
@@ -213,7 +217,7 @@ export default function MainPage() {
         ) : (
           <p
             className="text-sm"
-            style={{ color: 'var(--text)' }}
+            style={{ color: 'var(--ink)' }}
           >
             Нет доступных товаров
           </p>
@@ -224,11 +228,11 @@ export default function MainPage() {
       {isSuccessModalOpen && lastPurchase && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          style={{ backgroundColor: 'rgba(41, 37, 36, 0.5)' }}
         >
           <div
             className="max-w-md w-full p-8 rounded-lg"
-            style={{ backgroundColor: '#ffffff', boxShadow: 'var(--shadow)' }}
+            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
           >
             <div className="text-center">
               <div
@@ -251,7 +255,7 @@ export default function MainPage() {
               </div>
               <h2
                 className="text-xl font-semibold mb-4"
-                style={{ color: 'var(--text)' }}
+                style={{ color: 'var(--ink)' }}
               >
                 Покупка успешна!
               </h2>
@@ -259,19 +263,19 @@ export default function MainPage() {
                 className="text-left p-4 rounded mb-6"
                 style={{ backgroundColor: 'var(--success-bg)' }}
               >
-                <p style={{ color: 'var(--text)' }}>
+                <p style={{ color: 'var(--ink)' }}>
                   <strong>ID транзакции:</strong> {lastPurchase.id}
                 </p>
-                <p style={{ color: 'var(--text)' }}>
+                <p style={{ color: 'var(--ink)' }}>
                   <strong>ID товара:</strong> {lastPurchase.item_id}
                 </p>
-                <p style={{ color: 'var(--text)' }}>
+                <p style={{ color: 'var(--ink)' }}>
                   <strong>Количество:</strong> {lastPurchase.count}
                 </p>
-                <p style={{ color: 'var(--text)' }}>
+                <p style={{ color: 'var(--ink)' }}>
                   <strong>Сумма:</strong> {lastPurchase.price}
                 </p>
-                <p style={{ color: 'var(--text)' }}>
+                <p style={{ color: 'var(--ink)' }}>
                   <strong>Дата:</strong> {new Date(lastPurchase.created_at).toLocaleString()}
                 </p>
               </div>
