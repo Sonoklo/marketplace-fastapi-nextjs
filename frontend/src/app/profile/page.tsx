@@ -97,16 +97,30 @@ export default function ProfilePage() {
     if (!editUsername.trim()) {
       setUsernameError('Поле "Username" обязательно для заполнения');
       isValid = false;
+    } else if (editUsername.length < 1 || editUsername.length > 20) {
+      setUsernameError('Username должен содержать от 1 до 20 символов');
+      isValid = false;
+    } else if (!/^[a-zA-Z0-9_]+$/.test(editUsername)) {
+      setUsernameError('Username может содержать только буквы, цифры и символ подчеркивания');
+      isValid = false;
     }
 
     if (!editEmail.trim()) {
       setEmailError('Поле "Email" обязательно для заполнения');
       isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editEmail)) {
+      setEmailError('Введите корректный email адрес');
+      isValid = false;
     }
 
-    if (editPassword && editPassword.length < 8) {
-      setPasswordError('Пароль должен содержать минимум 8 символов');
-      isValid = false;
+    if (editPassword) {
+      if (editPassword.length < 8 || editPassword.length > 128) {
+        setPasswordError('Пароль должен содержать от 8 до 128 символов');
+        isValid = false;
+      } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).+$/.test(editPassword)) {
+        setPasswordError('Пароль должен содержать минимум одну заглавную букву, одну строчную, одну цифру и один специальный символ');
+        isValid = false;
+      }
     }
 
     return isValid;
@@ -527,7 +541,7 @@ export default function ProfilePage() {
 
               <FormField
                 id="edit-password"
-                label="Пароль (оставьте пустым, если не хотите менять)"
+                label="Пароль"
                 type="password"
                 value={editPassword}
                 onChange={setEditPassword}

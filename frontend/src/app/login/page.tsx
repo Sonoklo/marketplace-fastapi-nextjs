@@ -30,27 +30,25 @@ export default function LoginPage() {
     setPasswordError('');
     setGeneralError('');
 
-    // Username validation: 1-20 chars, only a-zA-Z0-9_
     if (!username.trim()) {
-      setUsernameError('Поле "Username" обязательно для заполнения');
+      setGeneralError('Username или пароль являються неверными');
       isValid = false;
     } else if (username.length < 1 || username.length > 20) {
-      setUsernameError('Username должен содержать от 1 до 20 символов');
+      setGeneralError('Username или пароль являються неверными');
       isValid = false;
     } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setUsernameError('Username может содержать только буквы, цифры и символ подчеркивания');
+      setGeneralError('Username или пароль являються неверными');
       isValid = false;
     }
 
-    // Password validation: 8-128 chars, at least one lowercase, one uppercase, one digit, one special char
     if (!password) {
-      setPasswordError('Поле "Пароль" обязательно для заполнения');
+      setGeneralError('Username или пароль являються неверными');
       isValid = false;
     } else if (password.length < 8 || password.length > 128) {
-      setPasswordError('Пароль должен содержать от 8 до 128 символов');
+      setGeneralError('Username или пароль являються неверными');
       isValid = false;
     } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).+$/.test(password)) {
-      setPasswordError('Пароль должен содержать минимум одну заглавную букву, одну строчную, одну цифру и один специальный символ');
+      setGeneralError('Username или пароль являються неверными');
       isValid = false;
     }
 
@@ -75,9 +73,9 @@ export default function LoginPage() {
       if (error.response) {
         const status = error.response.status;
         if (status === 400) {
-          setGeneralError('Неверные данные для входа');
+          setGeneralError('Неверный username или пароль');
         } else if (status === 401) {
-          setGeneralError('Не авторизован');
+          setGeneralError('Неверный username или пароль');
         } else if (status === 403) {
           setGeneralError('Доступ запрещён');
         } else if (status === 500) {
@@ -122,12 +120,6 @@ export default function LoginPage() {
             error={usernameError}
             placeholder="Введите логин"
           />
-          <p
-            className="text-xs mt-1 mb-4"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            Требования: 1-20 символов, только буквы, цифры и символ подчеркивания
-          </p>
 
           <FormField
             id="password"
@@ -139,12 +131,6 @@ export default function LoginPage() {
             error={passwordError}
             placeholder="Введите пароль"
           />
-          <p
-            className="text-xs mt-1 mb-4"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            Требования: 8-128 символов, минимум одна заглавная буква, одна строчная, одна цифра и один специальный символ
-          </p>
 
           <Button isLoading={isLoading}>Войти</Button>
 
