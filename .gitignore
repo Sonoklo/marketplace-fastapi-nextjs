@@ -15,3 +15,5 @@ env/
 htmlcov/
 
 /backend/alembic/versions/
+
+AGENTS.md
