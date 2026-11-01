@@ -23,9 +23,11 @@ export default function ProfilePage() {
   const [editUsername, setEditUsername] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editPassword, setEditPassword] = useState('');
+  const [editRepeatPassword, setEditRepeatPassword] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [repeatPasswordError, setRepeatPasswordError] = useState('');
   const [generalError, setGeneralError] = useState('');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
@@ -76,9 +78,11 @@ export default function ProfilePage() {
     setEditUsername(profile.username);
     setEditEmail(profile.email);
     setEditPassword('');
+    setEditRepeatPassword('');
     setUsernameError('');
     setEmailError('');
     setPasswordError('');
+    setRepeatPasswordError('');
     setGeneralError('');
     setIsEditModalOpen(true);
   };
@@ -92,6 +96,7 @@ export default function ProfilePage() {
     setUsernameError('');
     setEmailError('');
     setPasswordError('');
+    setRepeatPasswordError('');
     setGeneralError('');
 
     if (!editUsername.trim()) {
@@ -121,6 +126,16 @@ export default function ProfilePage() {
         setPasswordError('Пароль должен содержать минимум одну заглавную букву, одну строчную, одну цифру и один специальный символ');
         isValid = false;
       }
+    }
+
+    if (editPassword && editPassword !== editRepeatPassword) {
+      setRepeatPasswordError('Пароли не совпадают');
+      isValid = false;
+    }
+
+    if (!editPassword && editRepeatPassword) {
+      setRepeatPasswordError('Повтор пароля должен быть пустым, если пароль не меняется');
+      isValid = false;
     }
 
     return isValid;
@@ -220,6 +235,15 @@ export default function ProfilePage() {
     if (!itemCategory.trim()) {
       setItemCategoryError('Поле "Категория" обязательно для заполнения');
       isValid = false;
+    } else if (!/^[a-zA-Zа-яА-Я0-9\s,-]*$/.test(itemCategory)) {
+      setItemCategoryError('Категории могут содержать только буквы, цифры, пробелы, запятые и дефисы');
+      isValid = false;
+    } else if (itemCategory.includes(',')) {
+      const categories = itemCategory.split(',').map(c => c.trim()).filter(c => c);
+      if (categories.length === 0) {
+        setItemCategoryError('Запятая не может стоять сама по себе');
+        isValid = false;
+      }
     }
 
     return isValid;
@@ -565,6 +589,17 @@ export default function ProfilePage() {
                 onClearError={() => setPasswordError('')}
                 error={passwordError}
                 placeholder="Введите новый пароль"
+              />
+
+              <FormField
+                id="edit-repeat-password"
+                label="Повторите пароль"
+                type="password"
+                value={editRepeatPassword}
+                onChange={setEditRepeatPassword}
+                onClearError={() => setRepeatPasswordError('')}
+                error={repeatPasswordError}
+                placeholder="Повторите новый пароль"
               />
 
               <div className="flex gap-4 mt-6">
