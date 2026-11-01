@@ -182,21 +182,38 @@ export default function ProfilePage() {
     if (!itemName.trim()) {
       setItemNameError('Поле "Название" обязательно для заполнения');
       isValid = false;
+    } else if (itemName.length < 1 || itemName.length > 255) {
+      setItemNameError('Название должно содержать от 1 до 255 символов');
+      isValid = false;
+    }
+
+    if (itemDescription && itemDescription.length > 1000) {
+      setItemDescriptionError('Описание не должно превышать 1000 символов');
+      isValid = false;
     }
 
     if (!itemPrice.trim()) {
       setItemPriceError('Поле "Цена" обязательно для заполнения');
       isValid = false;
-    } else if (isNaN(Number(itemPrice)) || Number(itemPrice) <= 0) {
-      setItemPriceError('Цена должна быть положительным числом');
+    } else if (isNaN(Number(itemPrice))) {
+      setItemPriceError('Цена должна быть числом');
+      isValid = false;
+    } else if (Number(itemPrice) <= 0) {
+      setItemPriceError('Цена должна быть больше 0');
       isValid = false;
     }
 
     if (!itemCount.trim()) {
       setItemCountError('Поле "Количество" обязательно для заполнения');
       isValid = false;
-    } else if (isNaN(Number(itemCount)) || Number(itemCount) <= 0) {
-      setItemCountError('Количество должно быть положительным числом');
+    } else if (isNaN(Number(itemCount))) {
+      setItemCountError('Количество должно быть числом');
+      isValid = false;
+    } else if (!Number.isInteger(Number(itemCount))) {
+      setItemCountError('Количество должно быть целым числом');
+      isValid = false;
+    } else if (Number(itemCount) < 1) {
+      setItemCountError('Количество должно быть не меньше 1');
       isValid = false;
     }
 
