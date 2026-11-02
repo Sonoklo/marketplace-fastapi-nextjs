@@ -36,7 +36,7 @@ class Item(Base):
 
     categories = relationship("Category", secondary=item_categories, back_populates="items")
     creator = relationship("Account", back_populates="created_items")
-    purchases = relationship("Purchase", back_populates="item")
+    purchases = relationship("Purchase", back_populates="item",ondelete="CASCADE")
 
 
 class Category(Base):
