@@ -100,7 +100,7 @@ class PurchaseRequest(BaseModel):
 class PurchaseBase(BaseModel):
     account_id: int
     item_id: int
-    price: int
+    price: float
     count: int
 
 class PurchaseResponse(PurchaseBase):
