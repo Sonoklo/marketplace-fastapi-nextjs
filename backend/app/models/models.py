@@ -11,7 +11,7 @@ class Account(Base):
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
 
-    created_items = relationship("Item", back_populates="creator")
+    created_items = relationship("Item", back_populates="creator", ondelete="CASCADE")
     purchases = relationship("Purchase", back_populates="buyer",ondelete="CASCADE")
 
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
