@@ -51,6 +51,23 @@ class AccountUpdate(BaseModel):
     password: str | None = Field(default=None, min_length=8, max_length=128, description="Password of the user")
     repeat_password: str | None = Field( min_length=8,max_length=128,description="Repeat password of the user")
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not re.search(r"[a-z]", value):
+            raise ValueError("Password must contain a lowercase letter")
+
+        if not re.search(r"[A-Z]", value):
+            raise ValueError("Password must contain an uppercase letter")
+
+        if not re.search(r"\d", value):
+            raise ValueError("Password must contain a digit")
+
+        if not re.search(r"""[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]""", value):
+            raise ValueError("Password must contain a special character")
+
+        return value
+
 class TokenData(BaseModel):
     username: str
     user_id: int
