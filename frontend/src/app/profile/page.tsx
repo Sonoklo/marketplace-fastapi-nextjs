@@ -156,6 +156,7 @@ export default function ProfilePage() {
         username: editUsername,
         email: editEmail,
         password: editPassword || undefined,
+        repeat_password: editRepeatPassword || undefined,
       });
       await loadProfile();
       setIsEditModalOpen(false);
@@ -202,9 +203,11 @@ export default function ProfilePage() {
       isValid = false;
     }
 
-    if (itemDescription && itemDescription.length > 1000) {
-      setItemDescriptionError('Описание не должно превышать 1000 символов');
-      isValid = false;
+    if (itemDescription && itemDescription.trim()) {
+      if (itemDescription.length < 1 || itemDescription.length > 1000) {
+        setItemDescriptionError('Описание должно содержать от 1 до 1000 символов');
+        isValid = false;
+      }
     }
 
     if (!itemPrice.trim()) {
