@@ -1,3 +1,4 @@
+from webbrowser import get
 from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime, timezone
@@ -49,8 +50,12 @@ def get_profile(user_id:int, db:Session) -> ProfileResponse:
 def update_account(account:AccountUpdate, db:Session, user_id:int) -> Account:
     db_account: Account = get_account_by_id(user_id, db)
     if account.username:
+        if get_account_by_username(account.username, db):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Юзернейм уже занят")
         db_account.username = account.username
     if account.email:
+        if get_account_by_email(account.email, db):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email уже занят")
         db_account.email = account.email
     if account.password:
         db_account.password = get_password_hash(account.password)
