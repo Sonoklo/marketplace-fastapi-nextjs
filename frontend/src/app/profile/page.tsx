@@ -388,7 +388,10 @@ export default function ProfilePage() {
         >
           Профиль
         </h1>
-        <Button onClick={handleLogout} fullWidth={false}>Выйти</Button>
+        <div className="flex gap-2">
+          <Button onClick={() => router.push('/')} fullWidth={false}>На главную</Button>
+          <Button onClick={handleLogout} fullWidth={false}>Выйти</Button>
+        </div>
       </div>
 
       {/* Profile Content */}
