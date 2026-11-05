@@ -82,3 +82,15 @@ export interface ProfileResponse {
   items: ItemResponse[];
   purchases: PurchaseResponse[];
 }
+
+export interface BookmarkCreate {
+  item_id: number;
+}
+
+export interface BookmarkResponse {
+  id: number;
+  account_id: number;
+  item_id: number;
+  created_at: string;
+  item: ItemResponse | null;
+}

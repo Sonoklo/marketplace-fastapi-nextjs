@@ -14,6 +14,7 @@ export default function MainPage() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [lastPurchase, setLastPurchase] = useState<PurchaseResponse | null>(null);
   const [buyError, setBuyError] = useState('');
+  const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadItems();
@@ -74,6 +75,21 @@ export default function MainPage() {
       await loadItems();
     } catch (error: any) {
       setBuyError(error.response?.data?.detail || 'Ошибка при покупке товара');
+    }
+  };
+
+  const handleAddBookmark = async (itemId: number) => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      await itemsApi.addBookmark(itemId);
+      setBookmarkedItems(prev => new Set(prev).add(itemId));
+    } catch (error: any) {
+      console.error('Failed to add bookmark:', error);
     }
   };
 
@@ -205,12 +221,23 @@ export default function MainPage() {
                     +
                   </button>
                 </div>
-                <Button
-                  onClick={() => handleBuy(item.id)}
-                  disabled={item.count < 1}
-                >
-                  Купить
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => handleBuy(item.id)}
+                    disabled={item.count < 1}
+                    className="flex-1"
+                  >
+                    Купить
+                  </Button>
+                  <Button
+                    onClick={() => handleAddBookmark(item.id)}
+                    disabled={bookmarkedItems.has(item.id)}
+                    fullWidth={false}
+                    style={{ backgroundColor: bookmarkedItems.has(item.id) ? 'var(--warning)' : 'var(--info)' }}
+                  >
+                    {bookmarkedItems.has(item.id) ? 'В избранном' : 'В избранное'}
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

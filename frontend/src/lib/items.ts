@@ -1,5 +1,5 @@
 import api from './api';
-import { ItemCreate, ItemResponse, ItemUpdate, PurchaseResponse } from './types';
+import { ItemCreate, ItemResponse, ItemUpdate, PurchaseResponse, BookmarkCreate, BookmarkResponse } from './types';
 
 export const itemsApi = {
   getAllItems: async (): Promise<ItemResponse[]> => {
@@ -9,6 +9,16 @@ export const itemsApi = {
 
   buyItem: async (itemId: number, count: number): Promise<PurchaseResponse> => {
     const response = await api.post<PurchaseResponse>('/main/', { item_id: itemId, count });
+    return response.data;
+  },
+
+  addBookmark: async (itemId: number): Promise<BookmarkResponse> => {
+    const response = await api.post<BookmarkResponse>('/main/bookmarks', { item_id: itemId });
+    return response.data;
+  },
+
+  getBookmarks: async (): Promise<BookmarkResponse[]> => {
+    const response = await api.get<BookmarkResponse[]>('/profile/bookmarks');
     return response.data;
   },
 

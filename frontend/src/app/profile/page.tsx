@@ -7,11 +7,12 @@ import FormField from '@/components/FormField';
 import ErrorAlert from '@/components/ErrorAlert';
 import { authApi } from '@/lib/auth';
 import { itemsApi } from '@/lib/items';
-import { ItemCreate, ItemUpdate, ProfileResponse, ItemResponse } from '@/lib/types';
+import { ItemCreate, ItemUpdate, ProfileResponse, ItemResponse, BookmarkResponse } from '@/lib/types';
 
 export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
+  const [bookmarks, setBookmarks] = useState<BookmarkResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -57,6 +58,8 @@ export default function ProfilePage() {
     try {
       const data = await authApi.getProfile();
       setProfile(data);
+      const bookmarksData = await itemsApi.getBookmarks();
+      setBookmarks(bookmarksData);
     } catch (error: any) {
       console.error('Failed to load profile:', error);
       if (error.response?.status === 401) {
@@ -536,6 +539,61 @@ export default function ProfilePage() {
               style={{ color: 'var(--text-primary)' }}
             >
               У вас пока нет выставленных товаров
+            </p>
+          )}
+        </div>
+
+        {/* Bookmarked Items */}
+        <div
+          className="p-6 rounded-lg mb-8"
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
+        >
+          <h2
+            className="text-lg font-semibold mb-4"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Избранные товары
+          </h2>
+          {bookmarks.length > 0 ? (
+            <div className="space-y-4">
+              {bookmarks.map((bookmark) => (
+                <div
+                  key={bookmark.id}
+                  className="p-4 rounded border"
+                  style={{ borderColor: 'var(--border)' }}
+                >
+                  <h3
+                    className="text-lg font-semibold mb-2"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {bookmark.item?.name || `Товар #${bookmark.item_id}`}
+                  </h3>
+                  <p
+                    className="text-sm mb-2"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {bookmark.item?.description || 'Нет описания'}
+                  </p>
+                  <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--text-primary)' }}>
+                    <span>Цена: {bookmark.item?.price}</span>
+                    <span>Доступно: {bookmark.item?.count}</span>
+                  </div>
+                  <Button
+                    onClick={() => router.push('/')}
+                    fullWidth={false}
+                    style={{ backgroundColor: 'var(--info)' }}
+                  >
+                    Перейти к покупке
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p
+              className="text-sm"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              У вас пока нет избранных товаров
             </p>
           )}
         </div>
