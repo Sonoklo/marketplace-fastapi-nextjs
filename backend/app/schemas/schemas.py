@@ -139,3 +139,12 @@ class ProfileResponse(BaseModel):
 
 class BookmarkCreate(BaseModel):
     item_id: int
+
+class BookmarkResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    account_id: int
+    item_id: int
+    created_at: datetime
+    item: ItemResponse | None = None
