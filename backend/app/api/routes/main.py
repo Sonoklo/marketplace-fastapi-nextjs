@@ -71,3 +71,8 @@ def update_item(item_id: int, item: ItemUpdate, db: Session = Depends(get_db), c
 def delete_item(item_id: int, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> None:
     crud.delete_item(item_id=item_id, db=db, user_id=current_user.id)
     return None
+
+@router_profile.get("/bookmarks", response_model=list[BookmarkResponse], status_code=status.HTTP_200_OK)
+def get_bookmarks(db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> list[BookmarkResponse]:
+    return crud.get_bookmarks(user_id=current_user.id, db=db)
+
