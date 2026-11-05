@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from jose import jwt
 from fastapi import HTTPException, status
 
-from app.models.models import Account, Item, Purchase, Category
+from app.models.models import Account, Item, Purchase, Category, Bookmark
 from app.core.security import get_password_hash, verify_password
 from app.core.config import settings
 from app.schemas.schemas import *
@@ -179,3 +179,10 @@ def buy_item(user_id:int, item_id:int, count:int, db:Session) -> PurchaseRespons
     db.refresh(purchase)
     purchase.item = db_item
     return purchase
+
+def add_bookmark(bookmark:BookmarkCreate, db:Session, user_id:int) -> Bookmark:
+    db_bookmark = Bookmark(account_id=user_id, item_id=bookmark.item_id)
+    db.add(db_bookmark)
+    db.commit()
+    db.refresh(db_bookmark)
+    return db_bookmark
