@@ -131,6 +131,11 @@ export default function ProfilePage() {
       isValid = false;
     }
 
+    if (editPassword && !editRepeatPassword.trim()) {
+      setRepeatPasswordError('Поле "Повторите пароль" обязательно для заполнения, если меняете пароль');
+      isValid = false;
+    }
+
     if (!editPassword && editRepeatPassword) {
       setRepeatPasswordError('Повтор пароля должен быть пустым, если пароль не меняется');
       isValid = false;
@@ -146,20 +151,49 @@ export default function ProfilePage() {
       return;
     }
 
+    // Check if at least one field has changes
+    const hasChanges = editUsername.trim() || editEmail.trim() || editPassword.trim();
+    if (!hasChanges) {
+      setGeneralError('Измените хотя бы одно поле');
+      return;
+    }
+
     setGeneralError('');
     setIsProfileLoading(true);
 
     try {
-      await authApi.updateProfile({
-        username: editUsername,
-        email: editEmail,
-        password: editPassword || undefined,
-        repeat_password: editRepeatPassword || undefined,
-      });
+      const updateData: any = {};
+
+      if (editUsername.trim()) {
+        updateData.username = editUsername;
+      }
+
+      if (editEmail.trim()) {
+        updateData.email = editEmail;
+      }
+
+      if (editPassword.trim()) {
+        updateData.password = editPassword;
+        updateData.repeat_password = editRepeatPassword;
+      }
+
+      await authApi.updateProfile(updateData);
       await loadProfile();
       setIsEditModalOpen(false);
     } catch (error: any) {
-      setGeneralError(error.response?.data?.detail || 'Ошибка при сохранении профиля');
+      let errorMessage = 'Ошибка при сохранении профиля';
+      if (error.response?.data) {
+        if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data.detail) {
+          if (typeof error.response.data.detail === 'string') {
+            errorMessage = error.response.data.detail;
+          } else if (Array.isArray(error.response.data.detail)) {
+            errorMessage = error.response.data.detail.map((err: any) => err.msg || err).join(', ');
+          }
+        }
+      }
+      setGeneralError(errorMessage);
     } finally {
       setIsProfileLoading(false);
     }
