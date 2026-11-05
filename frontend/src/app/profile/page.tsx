@@ -7,7 +7,7 @@ import FormField from '@/components/FormField';
 import ErrorAlert from '@/components/ErrorAlert';
 import { authApi } from '@/lib/auth';
 import { itemsApi } from '@/lib/items';
-import { ItemCreate, ItemUpdate, ProfileResponse, ItemResponse, AccountUpdate } from '@/lib/types';
+import { ItemCreate, ItemUpdate, ProfileResponse, ItemResponse } from '@/lib/types';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -116,19 +116,12 @@ export default function ProfilePage() {
       }
     }
 
-    if (editPassword) {
+    if (editPassword && editPassword.trim()) {
       if (editPassword.length < 8 || editPassword.length > 128) {
         setPasswordError('Пароль должен содержать от 8 до 128 символов');
         isValid = false;
       } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).+$/.test(editPassword)) {
         setPasswordError('Пароль должен содержать минимум одну заглавную букву, одну строчную, одну цифру и один специальный символ');
-        isValid = false;
-      }
-    }
-
-    if (editRepeatPassword) {
-      if (editRepeatPassword.length < 8 || editRepeatPassword.length > 128) {
-        setRepeatPasswordError('Повтор пароля должен содержать от 8 до 128 символов');
         isValid = false;
       }
     }
@@ -158,11 +151,18 @@ export default function ProfilePage() {
       return;
     }
 
+    // Check if at least one field has changes
+    const hasChanges = editUsername.trim() || editEmail.trim() || editPassword.trim();
+    if (!hasChanges) {
+      setGeneralError('Измените хотя бы одно поле');
+      return;
+    }
+
     setGeneralError('');
     setIsProfileLoading(true);
 
     try {
-      const updateData: AccountUpdate = {};
+      const updateData: any = {};
 
       if (editUsername.trim()) {
         updateData.username = editUsername;
@@ -175,12 +175,18 @@ export default function ProfilePage() {
       if (editPassword.trim()) {
         updateData.password = editPassword;
         updateData.repeat_password = editRepeatPassword;
+      } else {
+        // Send null for password fields if not changed
+        updateData.password = null;
+        updateData.repeat_password = null;
       }
 
+      console.log('Sending update data:', updateData);
       await authApi.updateProfile(updateData);
       await loadProfile();
       setIsEditModalOpen(false);
     } catch (error: any) {
+      console.error('Update profile error:', error);
       let errorMessage = 'Ошибка при сохранении профиля';
       if (error.response?.data) {
         if (typeof error.response.data === 'string') {
@@ -623,7 +629,13 @@ export default function ProfilePage() {
                 label="Пароль"
                 type="password"
                 value={editPassword}
-                onChange={setEditPassword}
+                onChange={(value) => {
+                  setEditPassword(value);
+                  if (!value) {
+                    setEditRepeatPassword('');
+                    setRepeatPasswordError('');
+                  }
+                }}
                 onClearError={() => setPasswordError('')}
                 error={passwordError}
                 placeholder="Введите новый пароль"

@@ -56,11 +56,13 @@ def get_profile(user_id:int, db:Session) -> ProfileResponse:
 def update_account(account:AccountUpdate, db:Session, user_id:int) -> Account:
     db_account: Account = get_account_by_id(user_id, db)
     if account.username:
-        if get_account_by_username(account.username, db):
+        user = get_account_by_username(account.username, db)
+        if user and user.id != user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Юзернейм уже занят")
         db_account.username = account.username
     if account.email:
-        if get_account_by_email(account.email, db):
+        user = get_account_by_email(account.email, db)
+        if user and user.id != user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email уже занят")
         db_account.email = account.email
     if account.password:

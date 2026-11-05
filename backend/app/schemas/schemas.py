@@ -53,7 +53,10 @@ class AccountUpdate(BaseModel):
 
     @field_validator("password")
     @classmethod
-    def validate_password(cls, value: str) -> str:
+    def validate_password(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+
         if not re.search(r"[a-z]", value):
             raise ValueError("Password must contain a lowercase letter")
 
