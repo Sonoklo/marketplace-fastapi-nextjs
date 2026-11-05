@@ -58,6 +58,10 @@ def update_account(account:AccountUpdate, db:Session, user_id:int) -> Account:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email уже занят")
         db_account.email = account.email
     if account.password:
+        if not account.repeat_password:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Подтвердите пароль")
+        if account.password != account.repeat_password:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Пароли не совпадают")
         db_account.password = get_password_hash(account.password)
     db.commit()
     db.refresh(db_account)
