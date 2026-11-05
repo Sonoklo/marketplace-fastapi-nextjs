@@ -55,6 +55,10 @@ def main(db:Session=Depends(get_db)) -> list[ItemResponse]:
 def buy_item(item: PurchaseRequest, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> PurchaseResponse:
     return crud.buy_item(item_id=item.item_id, db=db, user_id=current_user.id, count=item.count)
 
+@router_main.post("/bookmarks", response_model=BookmarkResponse, status_code=status.HTTP_201_CREATED)
+def add_bookmark(bookmark: BookmarkCreate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Bookmark:
+    return crud.add_bookmark(bookmark=bookmark, db=db, user_id=current_user.id)
+
 @router_profile.post("/items", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
 def add_item(item: ItemCreate, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> Item:
     return crud.create_item(item=item, db=db, user_id=current_user.id)
