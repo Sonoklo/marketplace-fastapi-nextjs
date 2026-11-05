@@ -186,3 +186,7 @@ def add_bookmark(bookmark:BookmarkCreate, db:Session, user_id:int) -> Bookmark:
     db.commit()
     db.refresh(db_bookmark)
     return db_bookmark
+
+def get_bookmarks(user_id:int, db:Session) -> list[BookmarkResponse]:
+    bookmarks: list[Bookmark] = db.query(Bookmark).filter_by(account_id=user_id).all()
+    return bookmarks
