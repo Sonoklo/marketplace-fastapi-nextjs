@@ -136,3 +136,6 @@ class ProfileResponse(BaseModel):
     email: str
     items: list[ItemResponse]
     purchases: list[PurchaseResponse]
+
+class BookmarkCreate(BaseModel):
+    item_id: int
