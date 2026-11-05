@@ -63,3 +63,15 @@ class Purchase(Base):
     item = relationship("Item", back_populates="purchases")
 
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+class Bookmark(Base):
+    __tablename__ = "bookmarks"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    account_id = Column(Integer, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False)
+    item_id = Column(Integer, ForeignKey("items.id", ondelete="CASCADE"), nullable=False)
+
+    buyer = relationship("Account", back_populates="bookmarks")
+    item = relationship("Item", back_populates="bookmarks")
+
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
