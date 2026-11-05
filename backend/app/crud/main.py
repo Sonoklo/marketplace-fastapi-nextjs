@@ -20,6 +20,8 @@ def get_account_by_id(user_id:int, db:Session) -> Account:
     return db.query(Account).filter_by(id=user_id).first()
 
 def create_account(account:AccountRegister, db:Session) -> AccountResponse:
+    if account.password != account.repeat_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Пароли не совпадают")
     hash_password = get_password_hash(account.password)
     db_account = Account(username = account.username, password=hash_password, email=account.email)
     db.add(db_account)
