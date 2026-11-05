@@ -7,7 +7,7 @@ import FormField from '@/components/FormField';
 import ErrorAlert from '@/components/ErrorAlert';
 import { authApi } from '@/lib/auth';
 import { itemsApi } from '@/lib/items';
-import { ItemCreate, ItemUpdate, ProfileResponse, ItemResponse } from '@/lib/types';
+import { ItemCreate, ItemUpdate, ProfileResponse, ItemResponse, AccountUpdate } from '@/lib/types';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -126,6 +126,13 @@ export default function ProfilePage() {
       }
     }
 
+    if (editRepeatPassword) {
+      if (editRepeatPassword.length < 8 || editRepeatPassword.length > 128) {
+        setRepeatPasswordError('Повтор пароля должен содержать от 8 до 128 символов');
+        isValid = false;
+      }
+    }
+
     if (editPassword && editPassword !== editRepeatPassword) {
       setRepeatPasswordError('Пароли не совпадают');
       isValid = false;
@@ -151,18 +158,11 @@ export default function ProfilePage() {
       return;
     }
 
-    // Check if at least one field has changes
-    const hasChanges = editUsername.trim() || editEmail.trim() || editPassword.trim();
-    if (!hasChanges) {
-      setGeneralError('Измените хотя бы одно поле');
-      return;
-    }
-
     setGeneralError('');
     setIsProfileLoading(true);
 
     try {
-      const updateData: any = {};
+      const updateData: AccountUpdate = {};
 
       if (editUsername.trim()) {
         updateData.username = editUsername;
