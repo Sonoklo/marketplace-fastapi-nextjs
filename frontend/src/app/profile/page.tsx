@@ -99,23 +99,21 @@ export default function ProfilePage() {
     setRepeatPasswordError('');
     setGeneralError('');
 
-    if (!editUsername.trim()) {
-      setUsernameError('Поле "Username" обязательно для заполнения');
-      isValid = false;
-    } else if (editUsername.length < 1 || editUsername.length > 20) {
-      setUsernameError('Username должен содержать от 1 до 20 символов');
-      isValid = false;
-    } else if (!/^[a-zA-Z0-9_]+$/.test(editUsername)) {
-      setUsernameError('Username может содержать только буквы, цифры и символ подчеркивания');
-      isValid = false;
+    if (editUsername.trim()) {
+      if (editUsername.length < 1 || editUsername.length > 20) {
+        setUsernameError('Username должен содержать от 1 до 20 символов');
+        isValid = false;
+      } else if (!/^[a-zA-Z0-9_]+$/.test(editUsername)) {
+        setUsernameError('Username может содержать только буквы, цифры и символ подчеркивания');
+        isValid = false;
+      }
     }
 
-    if (!editEmail.trim()) {
-      setEmailError('Поле "Email" обязательно для заполнения');
-      isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editEmail)) {
-      setEmailError('Введите корректный email адрес');
-      isValid = false;
+    if (editEmail.trim()) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editEmail)) {
+        setEmailError('Введите корректный email адрес');
+        isValid = false;
+      }
     }
 
     if (editPassword) {
