@@ -6,7 +6,7 @@ from datetime import timedelta
 from app.db.database import get_db
 import app.crud.main as crud
 from app.schemas.schemas import *
-from app.models.models import Account, Item
+from app.models.models import Account, Item, Bookmark
 
 from app.core import config
 from app.core.dependencies import get_current_user
@@ -76,3 +76,6 @@ def delete_item(item_id: int, db: Session = Depends(get_db), current_user: Accou
 def get_bookmarks(db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> list[BookmarkResponse]:
     return crud.get_bookmarks(user_id=current_user.id, db=db)
 
+@router_profile.delete("/bookmarks/{bookmark_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_bookmark(bookmark_id: int, db: Session = Depends(get_db), current_user: Account = Depends(get_current_user)) -> None:
+    return crud.delete_bookmark(bookmark_id=bookmark_id, db=db, user_id=current_user.id)
