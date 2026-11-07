@@ -58,8 +58,13 @@ export default function ProfilePage() {
     try {
       const data = await authApi.getProfile();
       setProfile(data);
-      const bookmarksData = await itemsApi.getBookmarks();
-      setBookmarks(bookmarksData);
+      try {
+        const bookmarksData = await itemsApi.getBookmarks();
+        setBookmarks(bookmarksData);
+      } catch (bookmarkError) {
+        console.error('Failed to load bookmarks:', bookmarkError);
+        setBookmarks([]);
+      }
     } catch (error: any) {
       console.error('Failed to load profile:', error);
       if (error.response?.status === 401) {
