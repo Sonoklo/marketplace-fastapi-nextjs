@@ -15,7 +15,7 @@ export default function MainPage() {
   const [lastPurchase, setLastPurchase] = useState<PurchaseResponse | null>(null);
   const [buyError, setBuyError] = useState('');
   const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
-  const [bookmarkIds, setBookmarkIds] = useState<Record<number, number>>(({});
+  const [bookmarkIds, setBookmarkIds] = useState<Record<number, number>>({});
 
   useEffect(() => {
     loadItems();
@@ -265,13 +265,14 @@ export default function MainPage() {
                   </button>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleBuy(item.id)}
-                    disabled={item.count < 1}
-                    className="flex-1"
-                  >
-                    Купить
-                  </Button>
+                  <div className="flex-1">
+                    <Button
+                      onClick={() => handleBuy(item.id)}
+                      disabled={item.count < 1}
+                    >
+                      Купить
+                    </Button>
+                  </div>
                   <Button
                     onClick={() => {
                       if (bookmarkedItems.has(item.id)) {
