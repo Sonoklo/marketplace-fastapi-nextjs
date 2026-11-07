@@ -22,6 +22,10 @@ export const itemsApi = {
     return response.data;
   },
 
+  deleteBookmark: async (bookmarkId: number): Promise<void> => {
+    await api.delete(`/profile/bookmarks/${bookmarkId}`);
+  },
+
   createItem: async (data: ItemCreate): Promise<ItemResponse> => {
     const response = await api.post<ItemResponse>('/profile/items', data);
     return response.data;

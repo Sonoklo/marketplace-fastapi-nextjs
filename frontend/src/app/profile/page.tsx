@@ -360,6 +360,15 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDeleteBookmark = async (bookmarkId: number) => {
+    try {
+      await itemsApi.deleteBookmark(bookmarkId);
+      await loadProfile();
+    } catch (error: any) {
+      console.error('Failed to delete bookmark:', error);
+    }
+  };
+
   const handleUpdateItem = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -578,13 +587,22 @@ export default function ProfilePage() {
                     <span>Цена: {bookmark.item?.price}</span>
                     <span>Доступно: {bookmark.item?.count}</span>
                   </div>
-                  <Button
-                    onClick={() => router.push('/')}
-                    fullWidth={false}
-                    style={{ backgroundColor: 'var(--info)' }}
-                  >
-                    Перейти к покупке
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => router.push('/')}
+                      fullWidth={false}
+                      style={{ backgroundColor: 'var(--info)' }}
+                    >
+                      Перейти к покупке
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteBookmark(bookmark.id)}
+                      fullWidth={false}
+                      style={{ backgroundColor: 'var(--error)' }}
+                    >
+                      Удалить
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -15,9 +15,11 @@ export default function MainPage() {
   const [lastPurchase, setLastPurchase] = useState<PurchaseResponse | null>(null);
   const [buyError, setBuyError] = useState('');
   const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
+  const [bookmarkIds, setBookmarkIds] = useState<Record<number, number>>(({});
 
   useEffect(() => {
     loadItems();
+    loadBookmarks();
   }, []);
 
   const loadItems = async () => {
@@ -33,6 +35,25 @@ export default function MainPage() {
       console.error('Failed to load items:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadBookmarks = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    try {
+      const bookmarks = await itemsApi.getBookmarks();
+      const bookmarkedSet = new Set<number>();
+      const bookmarkIdMap: Record<number, number> = {};
+      bookmarks.forEach(b => {
+        bookmarkedSet.add(b.item_id);
+        bookmarkIdMap[b.item_id] = b.id;
+      });
+      setBookmarkedItems(bookmarkedSet);
+      setBookmarkIds(bookmarkIdMap);
+    } catch (error) {
+      console.error('Failed to load bookmarks:', error);
     }
   };
 
@@ -86,10 +107,32 @@ export default function MainPage() {
     }
 
     try {
-      await itemsApi.addBookmark(itemId);
+      const bookmark = await itemsApi.addBookmark(itemId);
       setBookmarkedItems(prev => new Set(prev).add(itemId));
+      setBookmarkIds(prev => ({ ...prev, [itemId]: bookmark.id }));
     } catch (error: any) {
       console.error('Failed to add bookmark:', error);
+    }
+  };
+
+  const handleRemoveBookmark = async (itemId: number) => {
+    const bookmarkId = bookmarkIds[itemId];
+    if (!bookmarkId) return;
+
+    try {
+      await itemsApi.deleteBookmark(bookmarkId);
+      setBookmarkedItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(itemId);
+        return newSet;
+      });
+      setBookmarkIds(prev => {
+        const newMap = { ...prev };
+        delete newMap[itemId];
+        return newMap;
+      });
+    } catch (error: any) {
+      console.error('Failed to remove bookmark:', error);
     }
   };
 
@@ -230,12 +273,17 @@ export default function MainPage() {
                     Купить
                   </Button>
                   <Button
-                    onClick={() => handleAddBookmark(item.id)}
-                    disabled={bookmarkedItems.has(item.id)}
+                    onClick={() => {
+                      if (bookmarkedItems.has(item.id)) {
+                        handleRemoveBookmark(item.id);
+                      } else {
+                        handleAddBookmark(item.id);
+                      }
+                    }}
                     fullWidth={false}
                     style={{ backgroundColor: bookmarkedItems.has(item.id) ? 'var(--warning)' : 'var(--info)' }}
                   >
-                    {bookmarkedItems.has(item.id) ? 'В избранном' : 'В избранное'}
+                    {bookmarkedItems.has(item.id) ? 'Удалить из избранного' : 'В избранное'}
                   </Button>
                 </div>
               </div>
