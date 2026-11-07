@@ -190,3 +190,11 @@ def add_bookmark(bookmark:BookmarkCreate, db:Session, user_id:int) -> Bookmark:
 def get_bookmarks(user_id:int, db:Session) -> list[BookmarkResponse]:
     bookmarks: list[Bookmark] = db.query(Bookmark).filter_by(account_id=user_id).all()
     return bookmarks
+
+def delete_bookmark(user_id:int, db:Session, bookmark_id:int) -> None:
+    bookmark = db.query(Bookmark).filter_by(account_id=user_id, id=bookmark_id).first()
+    if not bookmark:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Закладка не найдена")
+    db.delete(bookmark)
+    db.commit()
+    return None
