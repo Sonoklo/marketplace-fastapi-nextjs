@@ -228,46 +228,76 @@ export default function MainPage() {
               ×
             </button>
           </div>
-          {bookmarks.length > 0 ? (
-            <div className="space-y-3">
-              {bookmarks.map((bookmark) => (
-                <div
-                  key={bookmark.id}
-                  className="p-3 rounded border"
-                  style={{ borderColor: 'var(--border)' }}
-                >
-                  <h4
-                    className="font-semibold mb-1"
-                    style={{ color: 'var(--text-primary)' }}
+          {localStorage.getItem('access_token') ? (
+            bookmarks.length > 0 ? (
+              <div className="space-y-3">
+                {bookmarks.map((bookmark) => (
+                  <div
+                    key={bookmark.id}
+                    className="p-3 rounded border"
+                    style={{ borderColor: 'var(--border)' }}
                   >
-                    {bookmark.item?.name || `Товар #${bookmark.item_id}`}
-                  </h4>
-                  <p
-                    className="text-sm mb-2"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {bookmark.item?.price} ₽
-                  </p>
-                  <Button
-                    onClick={() => {
-                      setIsBookmarksPanelOpen(false);
-                      router.push('/');
-                    }}
-                    fullWidth={false}
-                    style={{ fontSize: '12px', padding: '4px 8px' }}
-                  >
-                    Перейти
-                  </Button>
-                </div>
-              ))}
-            </div>
+                    <h4
+                      className="font-semibold mb-1"
+                      style={{ color: 'var(--text-primary)' }}
+                    >
+                      {bookmark.item?.name || `Товар #${bookmark.item_id}`}
+                    </h4>
+                    <p
+                      className="text-sm mb-2"
+                      style={{ color: 'var(--text-primary)' }}
+                    >
+                      {bookmark.item?.price} ₽
+                    </p>
+                    <Button
+                      onClick={() => {
+                        setIsBookmarksPanelOpen(false);
+                      }}
+                      fullWidth={false}
+                      style={{ fontSize: '12px', padding: '4px 8px' }}
+                    >
+                      Закрыть
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p
+                className="text-sm"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                Нет избранных товаров
+              </p>
+            )
           ) : (
-            <p
-              className="text-sm"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              Нет избранных товаров
-            </p>
+            <div className="text-center">
+              <p
+                className="text-sm mb-4"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                Чтобы просматривать избранные товары, необходимо войти в аккаунт
+              </p>
+              <div className="flex gap-2 justify-center">
+                <Button
+                  onClick={() => {
+                    setIsBookmarksPanelOpen(false);
+                    router.push('/login');
+                  }}
+                  fullWidth={false}
+                >
+                  Войти
+                </Button>
+                <Button
+                  onClick={() => {
+                    setIsBookmarksPanelOpen(false);
+                    router.push('/register');
+                  }}
+                  fullWidth={false}
+                >
+                  Зарегистрироваться
+                </Button>
+              </div>
+            </div>
           )}
         </div>
       )}
