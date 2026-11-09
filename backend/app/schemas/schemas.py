@@ -6,7 +6,7 @@ class AccountBase(BaseModel):
     username: str = Field(
         min_length=1,
         max_length=20,
-        pattern=r"^[a-zA-Z0-9_]+$",
+        pattern=r"^[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$",
         description="Username of the user",
     )
 
@@ -46,10 +46,10 @@ class AccountResponse(AccountBase):
     updated_at: datetime
 
 class AccountUpdate(BaseModel):
-    username: str | None = Field(default=None, min_length=1, max_length=20, pattern=r"^[a-zA-Z0-9_]+$", description="Username of the user")
+    username: str | None = Field(default=None, min_length=1, max_length=20, pattern=r"^[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$", description="Username of the user")
     email: EmailStr | None = Field(default=None, min_length=1, max_length=255, description="Email address of the user")
     password: str | None = Field(default=None, min_length=8, max_length=128, description="Password of the user")
-    repeat_password: str | None = Field( min_length=8,max_length=128,description="Repeat password of the user")
+    repeat_password: str | None = Field(default=None, min_length=8, max_length=128, description="Repeat password of the user")
 
     @field_validator("password")
     @classmethod
