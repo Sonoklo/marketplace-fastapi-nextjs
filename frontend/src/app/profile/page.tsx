@@ -191,7 +191,6 @@ export default function ProfilePage() {
 
       console.log('Sending update data:', updateData);
       await authApi.updateProfile(updateData);
-      await loadProfile();
       setIsEditModalOpen(false);
     } catch (error: any) {
       console.error('Update profile error:', error);
