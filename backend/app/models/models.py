@@ -19,6 +19,7 @@ class Account(Base):
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
 
+    bookmarks = relationship("Bookmark", back_populates="buyer", cascade="all, delete-orphan")
     created_items = relationship("Item", back_populates="creator", cascade="all, delete-orphan")
     purchases = relationship("Purchase", back_populates="buyer", cascade="all, delete-orphan")
 
@@ -36,6 +37,7 @@ class Item(Base):
     price = Column(Float, nullable=False)
     user_id = Column(Integer, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False)
 
+    bookmarks = relationship("Bookmark", back_populates="item", cascade="all, delete-orphan")
     categories = relationship("Category", secondary=item_categories, back_populates="items")
     creator = relationship("Account", back_populates="created_items")
     purchases = relationship("Purchase", back_populates="item", cascade="all, delete-orphan")
