@@ -171,6 +171,7 @@ export default function ProfilePage() {
 
     try {
       const updateData: any = {};
+      const passwordChanged = editPassword.trim() !== '';
 
       if (editUsername.trim()) {
         updateData.username = editUsername;
@@ -180,7 +181,7 @@ export default function ProfilePage() {
         updateData.email = editEmail;
       }
 
-      if (editPassword.trim()) {
+      if (passwordChanged) {
         updateData.password = editPassword;
         updateData.repeat_password = editRepeatPassword;
       } else {
@@ -191,7 +192,22 @@ export default function ProfilePage() {
 
       console.log('Sending update data:', updateData);
       await authApi.updateProfile(updateData);
+
+      // Update local state for username and email if they were changed
+      if (editUsername.trim() && profile) {
+        setProfile({ ...profile, username: editUsername });
+      }
+      if (editEmail.trim() && profile) {
+        setProfile({ ...profile, email: editEmail });
+      }
+
       setIsEditModalOpen(false);
+
+      // If password was changed, log out the user
+      if (passwordChanged) {
+        localStorage.removeItem('access_token');
+        router.push('/login');
+      }
     } catch (error: any) {
       console.error('Update profile error:', error);
       let errorMessage = 'Ошибка при сохранении профиля';
