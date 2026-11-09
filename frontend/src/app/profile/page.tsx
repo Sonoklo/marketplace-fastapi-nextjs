@@ -214,6 +214,11 @@ export default function ProfilePage() {
       }
     } catch (error: any) {
       console.error('Update profile error:', error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('access_token');
+        router.push('/login');
+        return;
+      }
       let errorMessage = 'Ошибка при сохранении профиля';
       if (error.response?.data) {
         if (typeof error.response.data === 'string') {
