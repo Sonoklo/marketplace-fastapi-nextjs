@@ -55,8 +55,11 @@ export default function MainPage() {
       setBookmarkedItems(bookmarkedSet);
       setBookmarkIds(bookmarkIdMap);
       setBookmarks(bookmarks);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to load bookmarks:', error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('access_token');
+      }
     }
   };
 

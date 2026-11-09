@@ -61,8 +61,12 @@ export default function ProfilePage() {
       try {
         const bookmarksData = await itemsApi.getBookmarks();
         setBookmarks(bookmarksData);
-      } catch (bookmarkError) {
+      } catch (bookmarkError: any) {
         console.error('Failed to load bookmarks:', bookmarkError);
+        if (bookmarkError.response?.status === 401) {
+          localStorage.removeItem('access_token');
+          router.push('/login');
+        }
         setBookmarks([]);
       }
     } catch (error: any) {
