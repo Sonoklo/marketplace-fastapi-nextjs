@@ -43,7 +43,7 @@ export default function RegisterPage() {
     } else if (username.length < 1 || username.length > 20) {
       setUsernameError('Username должен содержать от 1 до 20 символов');
       isValid = false;
-    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    } else if (!/^[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$/.test(username)) {
       setUsernameError('Username может содержать только буквы, цифры и символ подчеркивания');
       isValid = false;
     }

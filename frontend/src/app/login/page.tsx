@@ -36,7 +36,7 @@ export default function LoginPage() {
     } else if (username.length < 1 || username.length > 20) {
       setGeneralError('Username или пароль являються неверными');
       isValid = false;
-    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    } else if (!/^[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$/.test(username)) {
       setGeneralError('Username или пароль являються неверными');
       isValid = false;
     }

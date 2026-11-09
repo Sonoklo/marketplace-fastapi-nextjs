@@ -111,7 +111,7 @@ export default function ProfilePage() {
       if (editUsername.length < 1 || editUsername.length > 20) {
         setUsernameError('Username должен содержать от 1 до 20 символов');
         isValid = false;
-      } else if (!/^[a-zA-Z0-9_]+$/.test(editUsername)) {
+      } else if (!/^[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$/.test(editUsername)) {
         setUsernameError('Username может содержать только буквы, цифры и символ подчеркивания');
         isValid = false;
       }
