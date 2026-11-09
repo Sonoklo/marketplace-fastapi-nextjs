@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import { itemsApi } from '@/lib/items';
-import { ItemResponse, PurchaseResponse } from '@/lib/types';
+import { ItemResponse, PurchaseResponse, BookmarkResponse } from '@/lib/types';
 
 export default function MainPage() {
   const router = useRouter();
@@ -16,6 +16,8 @@ export default function MainPage() {
   const [buyError, setBuyError] = useState('');
   const [bookmarkedItems, setBookmarkedItems] = useState<Set<number>>(new Set());
   const [bookmarkIds, setBookmarkIds] = useState<Record<number, number>>({});
+  const [bookmarks, setBookmarks] = useState<BookmarkResponse[]>([]);
+  const [isBookmarksPanelOpen, setIsBookmarksPanelOpen] = useState(false);
 
   useEffect(() => {
     loadItems();
@@ -52,6 +54,7 @@ export default function MainPage() {
       });
       setBookmarkedItems(bookmarkedSet);
       setBookmarkIds(bookmarkIdMap);
+      setBookmarks(bookmarks);
     } catch (error) {
       console.error('Failed to load bookmarks:', error);
     }
@@ -110,6 +113,7 @@ export default function MainPage() {
       const bookmark = await itemsApi.addBookmark(itemId);
       setBookmarkedItems(prev => new Set(prev).add(itemId));
       setBookmarkIds(prev => ({ ...prev, [itemId]: bookmark.id }));
+      await loadBookmarks();
     } catch (error: any) {
       console.error('Failed to add bookmark:', error);
     }
@@ -131,6 +135,7 @@ export default function MainPage() {
         delete newMap[itemId];
         return newMap;
       });
+      await loadBookmarks();
     } catch (error: any) {
       console.error('Failed to remove bookmark:', error);
     }
@@ -168,20 +173,104 @@ export default function MainPage() {
         >
           Маркетплейс
         </h1>
-        <Button
-          onClick={() => {
-            const token = localStorage.getItem('access_token');
-            if (token) {
-              router.push('/profile');
-            } else {
-              router.push('/login');
-            }
-          }}
-          fullWidth={false}
-        >
-          Профиль
-        </Button>
+        <div className="flex gap-4 items-center">
+          <button
+            onClick={() => setIsBookmarksPanelOpen(!isBookmarksPanelOpen)}
+            className="p-2 rounded-full"
+            style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill={bookmarks.length > 0 ? '#f44336' : 'none'}
+              stroke={bookmarks.length > 0 ? '#f44336' : 'currentColor'}
+              strokeWidth="2"
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </button>
+          <Button
+            onClick={() => {
+              const token = localStorage.getItem('access_token');
+              if (token) {
+                router.push('/profile');
+              } else {
+                router.push('/login');
+              }
+            }}
+            fullWidth={false}
+          >
+            Профиль
+          </Button>
+        </div>
       </div>
+
+      {/* Bookmarks Panel */}
+      {isBookmarksPanelOpen && (
+        <div
+          className="fixed top-16 right-8 w-96 max-h-96 overflow-y-auto p-4 rounded-lg shadow-lg z-50"
+          style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3
+              className="text-lg font-semibold"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              Избранное
+            </h3>
+            <button
+              onClick={() => setIsBookmarksPanelOpen(false)}
+              style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '20px' }}
+            >
+              ×
+            </button>
+          </div>
+          {bookmarks.length > 0 ? (
+            <div className="space-y-3">
+              {bookmarks.map((bookmark) => (
+                <div
+                  key={bookmark.id}
+                  className="p-3 rounded border"
+                  style={{ borderColor: 'var(--border)' }}
+                >
+                  <h4
+                    className="font-semibold mb-1"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {bookmark.item?.name || `Товар #${bookmark.item_id}`}
+                  </h4>
+                  <p
+                    className="text-sm mb-2"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {bookmark.item?.price} ₽
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setIsBookmarksPanelOpen(false);
+                      router.push('/');
+                    }}
+                    fullWidth={false}
+                    style={{ fontSize: '12px', padding: '4px 8px' }}
+                  >
+                    Перейти
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p
+              className="text-sm"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              Нет избранных товаров
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Items Section */}
       <div className="max-w-7xl mx-auto p-8">
