@@ -195,23 +195,17 @@ export default function ProfilePage() {
       }
 
       console.log('Sending update data:', updateData);
-      await authApi.updateProfile(updateData);
+      const response = await authApi.updateProfile(updateData);
 
-      // Update local state for username and email if they were changed
-      if (editUsername.trim() && profile) {
-        setProfile({ ...profile, username: editUsername });
+      // Save new token if it was returned
+      if (response.access_token) {
+        localStorage.setItem('access_token', response.access_token);
       }
-      if (editEmail.trim() && profile) {
-        setProfile({ ...profile, email: editEmail });
-      }
+
+      // Reload profile to get updated data
+      await loadProfile();
 
       setIsEditModalOpen(false);
-
-      // If password was changed, log out the user
-      if (passwordChanged) {
-        localStorage.removeItem('access_token');
-        router.push('/login');
-      }
     } catch (error: any) {
       console.error('Update profile error:', error);
       if (error.response?.status === 401) {

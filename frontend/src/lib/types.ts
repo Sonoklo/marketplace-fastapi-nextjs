@@ -65,6 +65,12 @@ export interface AccountUpdate {
   repeat_password?: string;
 }
 
+export interface AccountUpdateWithTokenResponse {
+  access_token: string;
+  token_type: string;
+  db_account: AccountUpdate;
+}
+
 export interface PurchaseResponse {
   id: number;
   account_id: number;

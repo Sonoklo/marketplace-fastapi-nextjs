@@ -1,5 +1,5 @@
 import api from './api';
-import { AccountRegister, AccountResponse, Token, LoginCredentials, AccountUpdate, ProfileResponse } from './types';
+import { AccountRegister, AccountResponse, Token, LoginCredentials, AccountUpdate, ProfileResponse, AccountUpdateWithTokenResponse } from './types';
 
 export const authApi = {
   register: async (data: AccountRegister): Promise<void> => {
@@ -24,8 +24,8 @@ export const authApi = {
     return response.data;
   },
 
-  updateProfile: async (data: AccountUpdate): Promise<AccountResponse> => {
-    const response = await api.patch<AccountResponse>('/profile/', data);
+  updateProfile: async (data: AccountUpdate): Promise<AccountUpdateWithTokenResponse> => {
+    const response = await api.patch<AccountUpdateWithTokenResponse>('/profile/', data);
     return response.data;
   },
 };
