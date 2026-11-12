@@ -188,10 +188,6 @@ export default function ProfilePage() {
       if (passwordChanged) {
         updateData.password = editPassword;
         updateData.repeat_password = editRepeatPassword;
-      } else {
-        // Send null for password fields if not changed
-        updateData.password = null;
-        updateData.repeat_password = null;
       }
 
       console.log('Sending update data:', updateData);
