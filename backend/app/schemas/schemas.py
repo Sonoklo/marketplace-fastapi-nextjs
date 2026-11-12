@@ -85,6 +85,9 @@ class Token(BaseModel):
         description="Тип токена"
     )
 
+class AccountUpdateWithTokenResponse(Token):
+    db_account: AccountUpdate
+
 class CategoryResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
