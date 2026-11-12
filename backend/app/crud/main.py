@@ -74,7 +74,7 @@ def update_account(account:AccountUpdate, db:Session, user_id:int) -> Account:
     db.refresh(db_account)
     access_token_expires = timedelta(minutes=settings.TOKEN_EXPIRES_TIME)
     token = create_access_token(data={"sub": db_account.username, "user_id": db_account.id, "exp":access_token_expires})
-    return AccountUpdateWithTokenResponse(access_token=token, token_type="bearer", db_account=db_account)
+    return AccountUpdateWithTokenResponse(access_token=token, token_type="bearer", db_account=AccountResponse.model_validate(db_account))
 
 def create_access_token(data:dict)->str:
     to_encode=data.copy()
