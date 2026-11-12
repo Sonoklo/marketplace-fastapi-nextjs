@@ -122,7 +122,10 @@ export default function ProfilePage() {
     }
 
     if (editEmail.trim()) {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editEmail)) {
+      if (editEmail.length < 5 || editEmail.length > 255) {
+        setEmailError('Email должен содержать от 5 до 255 символов');
+        isValid = false;
+      } else if (!/^[a-zA-Z0-9]+(?:[._][a-zA-Z0-9]+)*@[^@\s]+$/.test(editEmail)) {
         setEmailError('Введите корректный email адрес');
         isValid = false;
       }

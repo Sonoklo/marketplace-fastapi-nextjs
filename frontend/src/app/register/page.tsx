@@ -48,14 +48,14 @@ export default function RegisterPage() {
       isValid = false;
     }
 
-    // Email validation: 1-255 chars, valid email format
+    // Email validation: 5-255 chars, valid email format
     if (!email.trim()) {
       setEmailError('Поле "Email" обязательно для заполнения');
       isValid = false;
-    } else if (email.length < 1 || email.length > 255) {
-      setEmailError('Email должен содержать от 1 до 255 символов');
+    } else if (email.length < 5 || email.length > 255) {
+      setEmailError('Email должен содержать от 5 до 255 символов');
       isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    } else if (!/^[a-zA-Z0-9]+(?:[._][a-zA-Z0-9]+)*@[^@\s]+$/.test(email)) {
       setEmailError('Введите корректный email адрес');
       isValid = false;
     }
