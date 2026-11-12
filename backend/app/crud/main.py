@@ -1,7 +1,6 @@
-from webbrowser import get
 from sqlalchemy.orm import Session
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from jose import jwt
 from fastapi import HTTPException, status
 
@@ -73,7 +72,9 @@ def update_account(account:AccountUpdate, db:Session, user_id:int) -> Account:
         db_account.password = get_password_hash(account.password)
     db.commit()
     db.refresh(db_account)
-    return db_account
+    access_token_expires = timedelta(minutes=settings.TOKEN_EXPIRES_TIME)
+    token = create_access_token(data={"sub": db_account.username, "user_id": db_account.id, "exp":access_token_expires})
+    return AccountUpdateWithTokenResponse(access_token=token, token_type="bearer", db_account=db_account)
 
 def create_access_token(data:dict)->str:
     to_encode=data.copy()
