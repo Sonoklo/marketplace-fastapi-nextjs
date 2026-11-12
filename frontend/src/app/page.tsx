@@ -20,9 +20,6 @@ export default function MainPage() {
   const [selectedItem, setSelectedItem] = useState<ItemResponse | null>(null);
   const [isItemDetailOpen, setIsItemDetailOpen] = useState(false);
   const [itemDetailQuantity, setItemDetailQuantity] = useState(1);
-  const [isBuyPanelOpen, setIsBuyPanelOpen] = useState(false);
-  const [buyPanelItemId, setBuyPanelItemId] = useState<number | null>(null);
-  const [buyPanelQuantity, setBuyPanelQuantity] = useState(1);
 
   useEffect(() => {
     loadItems();
@@ -139,30 +136,12 @@ export default function MainPage() {
   };
 
   const handleBookmarkBuy = (itemId: number) => {
-    setBuyPanelItemId(itemId);
-    setBuyPanelQuantity(1);
-    setIsBuyPanelOpen(true);
-  };
-
-  const handleBuyPanelBuy = async () => {
-    if (!buyPanelItemId) return;
-
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    setBuyError('');
-    try {
-      const purchase = await itemsApi.buyItem(buyPanelItemId, buyPanelQuantity);
-      setLastPurchase(purchase);
-      setIsSuccessModalOpen(true);
-      setIsBuyPanelOpen(false);
-      await loadItems();
-      await loadBookmarks();
-    } catch (error: any) {
-      setBuyError(error.response?.data?.detail || 'Ошибка при покупке товара');
+    const item = items.find(i => i.id === itemId);
+    if (item) {
+      setSelectedItem(item);
+      setItemDetailQuantity(1);
+      setIsItemDetailOpen(true);
+      setIsBookmarksPanelOpen(false);
     }
   };
 
@@ -273,7 +252,7 @@ export default function MainPage() {
                       className="text-sm mb-2"
                       style={{ color: 'var(--text-primary)' }}
                     >
-                      {bookmark.item?.price} ₽
+                      ${bookmark.item?.price}
                     </p>
                     <Button
                       onClick={() => handleBookmarkBuy(bookmark.item_id)}
@@ -367,7 +346,7 @@ export default function MainPage() {
                   {item.description || 'Нет описания'}
                 </p>
                 <div className="flex gap-4 text-sm" style={{ color: 'var(--text-primary)' }}>
-                  <span>Цена: {item.price}</span>
+                  <span>Цена: ${item.price}</span>
                   <span>Доступно: {item.count}</span>
                 </div>
                 <div className="mb-4">
@@ -422,7 +401,7 @@ export default function MainPage() {
               {selectedItem.description || 'Нет описания'}
             </p>
             <div className="flex gap-4 text-sm mb-4" style={{ color: 'var(--text-primary)' }}>
-              <span>Цена: {selectedItem.price}</span>
+              <span>Цена: ${selectedItem.price}</span>
               <span>Доступно: {selectedItem.count}</span>
             </div>
             <div className="mb-4">
@@ -496,71 +475,6 @@ export default function MainPage() {
         </div>
       )}
 
-      {/* Buy Panel Modal */}
-      {isBuyPanelOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-        >
-          <div
-            className="max-w-md w-full p-8 rounded-lg"
-            style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow)' }}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2
-                className="text-xl font-semibold"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                Покупка товара
-              </h2>
-              <button
-                onClick={() => setIsBuyPanelOpen(false)}
-                style={{ backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontSize: '24px' }}
-              >
-                ×
-              </button>
-            </div>
-            {buyError && (
-              <div
-                className="mb-4 px-4 py-3 rounded"
-                style={{
-                  backgroundColor: 'var(--error-bg)',
-                  color: 'var(--error)',
-                  border: `1px solid var(--error)`,
-                }}
-              >
-                {buyError}
-              </div>
-            )}
-            <div className="flex items-center gap-2 mb-4">
-              <button
-                onClick={() => setBuyPanelQuantity(Math.max(1, buyPanelQuantity - 1))}
-                className="w-8 h-8 rounded flex items-center justify-center"
-                style={{ backgroundColor: 'var(--border)', color: 'var(--text-primary)' }}
-              >
-                -
-              </button>
-              <input
-                type="number"
-                min="1"
-                value={buyPanelQuantity}
-                onChange={(e) => setBuyPanelQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-16 text-center border rounded py-1"
-                style={{ backgroundColor: 'var(--inset)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
-              />
-              <button
-                onClick={() => setBuyPanelQuantity(buyPanelQuantity + 1)}
-                className="w-8 h-8 rounded flex items-center justify-center"
-                style={{ backgroundColor: 'var(--border)', color: 'var(--text-primary)' }}
-              >
-                +
-              </button>
-            </div>
-            <Button onClick={handleBuyPanelBuy}>Купить</Button>
-          </div>
-        </div>
-      )}
-
       {/* Success Modal */}
       {isSuccessModalOpen && lastPurchase && (
         <div
@@ -609,8 +523,8 @@ export default function MainPage() {
                 <p style={{ color: 'var(--text-primary)' }}>
                   <strong>Количество:</strong> {lastPurchase.count}
                 </p>
-                <p style={{ color: 'var(--text-card)' }}>
-                  <strong>Сумма:</strong> {lastPurchase.price}
+                <p style={{ color: 'var(--text-primary)' }}>
+                  <strong>Сумма:</strong> ${lastPurchase.price}
                 </p>
                 <p style={{ color: 'var(--text-primary)' }}>
                   <strong>Дата:</strong> {new Date(lastPurchase.created_at).toLocaleString()}
