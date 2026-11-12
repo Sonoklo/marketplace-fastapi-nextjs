@@ -68,7 +68,7 @@ export interface AccountUpdate {
 export interface AccountUpdateWithTokenResponse {
   access_token: string;
   token_type: string;
-  db_account: AccountUpdate;
+  db_account: AccountResponse;
 }
 
 export interface PurchaseResponse {
