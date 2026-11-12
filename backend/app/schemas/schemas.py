@@ -45,6 +45,8 @@ class AccountResponse(AccountBase):
     created_at: datetime
     updated_at: datetime
 
+    model_config = ConfigDict(from_attributes=True)
+    
 class AccountUpdate(BaseModel):
     username: str | None = Field(default=None, min_length=1, max_length=20, pattern=r"^[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*$", description="Username of the user")
     email: EmailStr | None = Field(default=None, min_length=1, max_length=255, description="Email address of the user")
@@ -86,7 +88,7 @@ class Token(BaseModel):
     )
 
 class AccountUpdateWithTokenResponse(Token):
-    db_account: AccountUpdate
+    db_account: AccountResponse
 
 class CategoryResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
